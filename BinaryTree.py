@@ -1,18 +1,23 @@
 import pygame
 import sys
+import os
 import random
 from pygame.locals import *
+WIDTH = 800
+HEIGHT = 600
+# os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WIDTH/2, HEIGHT/2)
 
 pygame.init()
-pygame.display.set_caption("graphical representation of binary search trees")
+# Center the Game Application
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
+pygame.display.set_caption("Spelunker")
 pygame.key.set_repeat(200, 20)
 # infoObject contains information about the users display settings e.g. resolution
 infoObject = pygame.display.Info()
 # Display should fit to users resolution
 # IMPORTANT: WANT THIS TO BE FULLSCREEN, CURRENTLY GETS CUT OFF AT THE BOTTOM
-WIDTH = infoObject.current_w
-HEIGHT = infoObject.current_h
-pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+screen = pygame.display.set_mode([WIDTH, HEIGHT])
 # RGB colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -29,10 +34,11 @@ ROOT_X = WIDTH / 2
 # BOX_SIZE is used to determine the size of the box obviously, but it's also used to change the X and Y Step,
 # which is how far the box is from the starting point.
 BOX_SIZE = (25, 25)
-X_STEP = BOX_SIZE[0] + 2
+X_STEP = BOX_SIZE[0] + 10
 
-Y_START = 20
-Y_STEP = BOX_SIZE[1] * 3
+Y_START = 200
+# Y_STEP's multiplier determines how deep the line from node to node is
+Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
 NUM_OF_NODES = 100

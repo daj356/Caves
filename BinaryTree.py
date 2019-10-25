@@ -3,6 +3,15 @@ import sys
 import os
 import random
 from pygame.locals import *
+import pyttsx3
+
+engine = pyttsx3.init()
+engine.setProperty('rate', 115) # Speed percent
+voices = engine.getProperty('voices')
+engine.say('You\'ve got mail.')
+engine.runAndWait()
+
+
 WIDTH = 800
 HEIGHT = 600
 # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WIDTH/2, HEIGHT/2)

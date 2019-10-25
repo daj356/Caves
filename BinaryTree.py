@@ -24,6 +24,10 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+
+# Game Fonts
+TITLE_FONT = "ARCADECLASSIC.TTF"
 
 # Fonts
 droidsans = pygame.font.match_font("verdana")
@@ -45,6 +49,10 @@ NUM_OF_NODES = 100
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
+# Game Framerate
+CLOCK = pygame.time.Clock()
+FPS = 30
+
 
 # A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
 # they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
@@ -60,6 +68,58 @@ class Master(object):
         self.y_shift = 0
         self.clock = pygame.time.Clock()
         self.selection = None
+
+    # Text Renderer
+    def text_format(self, message, textFont, textSize, textColor):
+        newFont = pygame.font.Font(textFont, textSize)
+        newText = newFont.render(message, 0, textColor)
+        return newText
+
+    # Main Menu
+    def intro_screen(self):
+        intro_screen = True
+        selected = "start"
+
+        while intro_screen:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        selected = "start"
+                    elif event.key == pygame.K_DOWN:
+                        selected = "quit"
+                    if event.key == pygame.K_RETURN:
+                        if selected == "start":
+                            intro_screen = False
+                        if selected == "quit":
+                            pygame.quit()
+                            quit()
+
+            # Main Menu UI
+            screen.fill(BLACK)
+            title = m.text_format("Spelunker 2000", TITLE_FONT, 90, RED)
+            if selected == "start":
+                text_start = self.text_format("START", TITLE_FONT, 85, YELLOW)
+            else:
+                text_start = self.text_format("START", TITLE_FONT, 75, WHITE)
+            if selected == "quit":
+                text_quit = self.text_format("QUIT", TITLE_FONT, 85, YELLOW)
+            else:
+                text_quit = self.text_format("QUIT", TITLE_FONT, 75, WHITE)
+
+            title_rect = title.get_rect()
+            start_rect = text_start.get_rect()
+            quit_rect = text_quit.get_rect()
+
+            # Main Menu Text
+            screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
+            screen.blit(text_start, (WIDTH / 2 - (start_rect[2] / 2), 300))
+            screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 360))
+            pygame.display.update()
+            self.clock.tick(FPS)
+            pygame.display.set_caption("Python - Pygame Simple Main Menu Selection")
 
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
@@ -97,8 +157,7 @@ class Node(object):
                 children += self.left.count_children()
                 mod = children * X_STEP
         else:
-            print
-            "unhandled case in set_rect()"
+            print("unhandled case in set_rect()")
             sys.exit(1)
         if self.type in ["left", "right"]:
             x = self.parent.rect.left
@@ -131,8 +190,7 @@ class Node(object):
 
 
 def quit():
-    print
-    "QUIT"
+    print("Exiting...")
     pygame.quit()
     sys.exit()
 
@@ -158,23 +216,19 @@ def interface():
                 if m.selection.parent:
                     m.selection = m.selection.parent
                 else:
-                    print
-                    "no parent to be selected"
+                    print("no parent to be selected")
             elif event.key == K_LEFT:
                 if m.selection.left:
                     m.selection = m.selection.left
                 else:
-                    print
-                    "no left-child to be selected"
+                    print("no left-child to be selected")
             elif event.key == K_RIGHT:
                 if m.selection.right:
                     m.selection = m.selection.right
                 else:
-                    print
-                    "no right-child to be selected"
+                    print("no right-child to be selected")
             else:
-                print
-                "invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key)
+                print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
 
 
 def draw():
@@ -223,8 +277,7 @@ def build_tree():
         insert_node(root, r)
     set_all_rects()
 
-    print
-    "-" * 60
+    print("-" * 60)
     walk_tree(root)
 
     m.selection = root
@@ -275,17 +328,13 @@ def set_all_rects():
 
 # initialization
 m = Master()
-
+m.intro_screen()
 root = build_tree()
 
-print
-"count: %d" % m.nodecount
-print
-"layers: %d" % (len(m.nodelist) + 1)
-print
-"root kids"
-print
-root.count_children()
+print("count: %d" % m.nodecount)
+print("layers: %d" % (len(m.nodelist) + 1))
+print("root kids")
+print(root.count_children())
 
 while True:
     m.clock.tick(60)
@@ -293,3 +342,4 @@ while True:
     m.display.fill(BLACK)
     draw()
     pygame.display.flip()
+

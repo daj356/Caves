@@ -2,6 +2,25 @@ import pygame
 import sys
 import random
 from pygame.locals import *
+import pyttsx3
+
+engine = pyttsx3.init()
+engine.setProperty('rate', 115) # Speed percent
+
+british = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-UK_HAZEL_11.0"
+
+voices = engine.getProperty('voices')
+for voice in voices:
+    print("Voice:")
+    print(" - ID: %s" % voice.id)
+    print(" - Name: %s" % voice.name)
+    print(" - Languages: %s" % voice.languages)
+    print(" - Gender: %s" % voice.gender)
+    print(" - Age: %s" % voice.age)
+
+engine.say('You\'ve got mail.')
+engine.runAndWait()
+
 
 pygame.init()
 pygame.display.set_caption("graphical representation of binary search trees")

@@ -53,7 +53,6 @@ KEYBOARD_PAN_STEP = 50
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
 class Master(object):
     def __init__(self):
-        self.numNode = 0
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         # nodelist - a 2d array of nodes sorted by depth level,
         # it is initialized as empty, layers added as needed
@@ -68,8 +67,7 @@ class Master(object):
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
 # and right and the depth.
 class Node(object):
-    def __init__(self, parent=None, right=None, left=None, depth=None, nodenum=None):
-        self.nodenum = nodenum
+    def __init__(self, parent=None, right=None, left=None, depth=None):
         self.type = None
         self.parent = parent
         self.right = right
@@ -161,16 +159,17 @@ def interface():
                 if m.selection.left:
                     m.selection = m.selection.left
                 else:
-                    insert_node_left(m.selection, m.selection.nodenum, m.selection.depth)
+                    insert_node_left(m.selection, m.selection.depth)
                     set_all_rects()
             elif event.key == K_RIGHT:
                 if m.selection.right:
                     m.selection = m.selection.right
                 else:
-                    insert_node_right(m.selection, m.selection.nodenum, m.selection.depth)
+                    insert_node_right(m.selection, m.selection.depth)
                     set_all_rects()
             else:
                 print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
+
 
 def draw():
     for depth_level in m.nodelist:
@@ -201,9 +200,7 @@ def draw():
 
 
 def create_root_node():
-    root = Node(depth=0, nodenum=m.numNode)
-    m.numNode = m.numNode + 1
-    print(m.numNode)
+    root = Node(depth=0)
     root.type = "root"
     add_new_node(root, 0)
     m.nodecount += 1
@@ -215,11 +212,35 @@ def build_tree():
     root = create_root_node()
     set_all_rects()
 
-    print
-    "-" * 60
     walk_tree(root)
 
     m.selection = root
+    return root
+
+
+def build_full_tree():
+    root = create_root_node()
+    m.selection = root
+    while root.count_children() < NUM_OF_NODES:
+        rand = random.randint(0, 3)
+        if rand == 1:
+            if m.selection.left:
+                m.selection = m.selection.left
+            else:
+                insert_node_left(m.selection, m.selection.depth)
+                set_all_rects()
+        if rand == 2:
+            if m.selection.right:
+                m.selection = m.selection.right
+            else:
+                insert_node_right(m.selection, m.selection.depth)
+                set_all_rects()
+        if rand == 3:
+            if m.selection.parent:
+                m.selection = m.selection.parent
+    for x in range(NUM_OF_NODES):
+        if m.selection.parent:
+            m.selection = m.selection.parent
     return root
 
 
@@ -231,20 +252,18 @@ def add_new_node(leaf, depth):
         m.nodelist[depth].append(leaf)
 
 
-def insert_node_right(node, nodenum, depth):
-    if m.selection.nodenum == nodenum:
-        node.right = Node(parent=node)
-        node.right.type = "right"
-        node.right.depth = depth + 1
-        add_new_node(node.right, depth+1)
+def insert_node_right(node, depth):
+    node.right = Node(parent=node)
+    node.right.type = "right"
+    node.right.depth = depth + 1
+    add_new_node(node.right, depth + 1)
 
 
-def insert_node_left(node, nodenum, depth):
-    if m.selection.nodenum == nodenum:
-        node.left = Node(parent=node)
-        node.left.type = "left"
-        node.left.depth = depth + 1
-        add_new_node(node.left, depth+1)
+def insert_node_left(node, depth):
+    node.left = Node(parent=node)
+    node.left.type = "left"
+    node.left.depth = depth + 1
+    add_new_node(node.left, depth + 1)
 
 
 def walk_tree(leaf):
@@ -263,7 +282,7 @@ def set_all_rects():
 # initialization
 m = Master()
 
-root = build_tree()
+root = build_full_tree()
 
 print
 "count: %d" % m.nodecount
@@ -271,8 +290,7 @@ print
 "layers: %d" % (len(m.nodelist) + 1)
 print
 "root kids"
-print
-root.count_children()
+print(root.count_children())
 
 while True:
     m.clock.tick(60)

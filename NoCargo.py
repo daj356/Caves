@@ -53,6 +53,7 @@ KEYBOARD_PAN_STEP = 50
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
 class Master(object):
     def __init__(self):
+        self.numNode = 0
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         # nodelist - a 2d array of nodes sorted by depth level,
         # it is initialized as empty, layers added as needed
@@ -67,7 +68,8 @@ class Master(object):
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
 # and right and the depth.
 class Node(object):
-    def __init__(self, parent=None, right=None, left=None, depth=None):
+    def __init__(self, parent=None, right=None, left=None, depth=None, nodenum=None):
+        self.nodenum = nodenum
         self.type = None
         self.parent = parent
         self.right = right
@@ -154,24 +156,21 @@ def interface():
                 if m.selection.parent:
                     m.selection = m.selection.parent
                 else:
-                    print
-                    "no parent to be selected"
+                    print("no parent to be selected")
             elif event.key == K_LEFT:
                 if m.selection.left:
                     m.selection = m.selection.left
                 else:
-                    insert_node_left(root, m.selection.depth)
+                    insert_node_left(m.selection, m.selection.nodenum, m.selection.depth)
                     set_all_rects()
             elif event.key == K_RIGHT:
                 if m.selection.right:
                     m.selection = m.selection.right
                 else:
-                    insert_node_right(root, m.selection.depth)
+                    insert_node_right(m.selection, m.selection.nodenum, m.selection.depth)
                     set_all_rects()
             else:
-                print
-                "invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key)
-
+                print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
 
 def draw():
     for depth_level in m.nodelist:
@@ -202,7 +201,9 @@ def draw():
 
 
 def create_root_node():
-    root = Node(depth=0)
+    root = Node(depth=0, nodenum=m.numNode)
+    m.numNode = m.numNode + 1
+    print(m.numNode)
     root.type = "root"
     add_new_node(root, 0)
     m.nodecount += 1
@@ -230,24 +231,20 @@ def add_new_node(leaf, depth):
         m.nodelist[depth].append(leaf)
 
 
-def insert_node_right(leaf, depth=0):
-    if not leaf.depth:
-        leaf.depth = depth
-    if not leaf.right:
-        leaf.right = Node(parent=leaf)
-        leaf.right.type = "right"
-        leaf.right.depth = depth + 1
-        add_new_node(leaf.right, depth)
+def insert_node_right(node, nodenum, depth):
+    if m.selection.nodenum == nodenum:
+        node.right = Node(parent=node)
+        node.right.type = "right"
+        node.right.depth = depth + 1
+        add_new_node(node.right, depth+1)
 
 
-def insert_node_left(leaf, depth=0):
-    if not leaf.depth:
-        leaf.depth = depth
-    if not leaf.left:
-        leaf.left = Node(parent=leaf)
-        leaf.left.type = "left"
-        leaf.left.depth = depth + 1
-        add_new_node(leaf.left, depth+1)
+def insert_node_left(node, nodenum, depth):
+    if m.selection.nodenum == nodenum:
+        node.left = Node(parent=node)
+        node.left.type = "left"
+        node.left.depth = depth + 1
+        add_new_node(node.left, depth+1)
 
 
 def walk_tree(leaf):

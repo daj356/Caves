@@ -218,7 +218,7 @@ def build_tree():
     return root
 
 
-def build_full_tree():
+def build_rand_tree():
     root = create_root_node()
     m.selection = root
     while root.count_children() < NUM_OF_NODES:
@@ -242,6 +242,40 @@ def build_full_tree():
         if m.selection.parent:
             m.selection = m.selection.parent
     return root
+
+
+# Degenerate tree
+def build_degen_tree():
+    root = create_root_node()
+    m.selection = root
+    # Randomly chooses if degen tree should be left or right
+    rand = random.randint(0, 1)
+    if rand == 0:
+        while root.count_children() < 6:
+            # If/else statement creates node.
+            if m.selection.left:
+                m.selection = m.selection.left
+            else:
+                insert_node_left(m.selection, m.selection.depth)
+                set_all_rects()
+    if rand == 1:
+        while root.count_children() < 6:
+            if m.selection.right:
+                m.selection = m.selection.right
+            else:
+                insert_node_right(m.selection, m.selection.depth)
+                set_all_rects()
+
+    for x in range(NUM_OF_NODES):
+        if m.selection.parent:
+            m.selection = m.selection.parent
+    return root
+
+
+
+
+    return root
+
 
 
 def add_new_node(leaf, depth):
@@ -282,7 +316,7 @@ def set_all_rects():
 # initialization
 m = Master()
 
-root = build_full_tree()
+root = build_degen_tree()
 
 print
 "count: %d" % m.nodecount

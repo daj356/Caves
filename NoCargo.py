@@ -43,7 +43,7 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 100
+NUM_OF_NODES = 10
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
@@ -74,7 +74,9 @@ class Node(object):
         self.left = left
         self.depth = depth
         self.rect = None
+        self.visit = 0
         m.nodecount += 1
+        self.value = m.nodecount
 
     def __str__(self):  # Used to give information about the depth. Displayed at bottom of the screen.
         return "NODE depth: %d" % self.depth
@@ -279,17 +281,39 @@ def set_all_rects():
             node.set_rect()
 
 
+def random_search():
+    stepCount = 0
+    tempArray = [0 for x in range(m.nodecount + 1)]
+    tempArray[0] = 1
+    tempArray[2] = 1
+    while 0 in tempArray:
+        m.selection.visit = 1
+        tempArray[m.selection.value] = 1
+        rand = random.randint(0, 3)
+        if rand == 1:
+            if m.selection.left:
+                m.selection = m.selection.left
+                stepCount = stepCount + 1
+        if rand == 2:
+            if m.selection.right:
+                m.selection = m.selection.right
+                stepCount = stepCount + 1
+        if rand == 3:
+            if m.selection.parent:
+                m.selection = m.selection.parent
+                stepCount = stepCount + 1
+    print("Steps number for random search: " + str(stepCount))
+
+
 # initialization
 m = Master()
 
 root = build_full_tree()
+random_search()
 
-print
-"count: %d" % m.nodecount
-print
-"layers: %d" % (len(m.nodelist) + 1)
-print
-"root kids"
+print("count: %d" % m.nodecount)
+print("layers: %d" % (len(m.nodelist) + 1))
+print("root kids")
 print(root.count_children())
 
 while True:

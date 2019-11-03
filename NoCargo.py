@@ -43,7 +43,7 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 10
+NUM_OF_NODES = 15
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
@@ -76,7 +76,7 @@ class Node(object):
         self.rect = None
         self.visit = 0
         m.nodecount += 1
-        self.value = m.nodecount
+        self.value = m.nodecount - 1
 
     def __str__(self):  # Used to give information about the depth. Displayed at bottom of the screen.
         return "NODE depth: %d" % self.depth
@@ -111,6 +111,11 @@ class Node(object):
     def draw(self):
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
                                 self.rect.width, self.rect.height)
+        if BOX_SIZE[0] >= 10:  # skip text if box is too small
+            text = FONT.render(str(self.value), 1, WHITE)
+            tr = text.get_rect()
+            tr.center = rect.center
+            m.display.blit(text, tr)
         pygame.draw.rect(m.display, BLUE, rect, 1)
         if self.parent:
             start = (rect.centerx, rect.top)
@@ -281,7 +286,61 @@ def set_all_rects():
             node.set_rect()
 
 
-def random_search():
+def random_search(tar):
+    stepCount = 0
+    while True:
+        m.selection.visit = 1
+        if m.selection.value == tar:
+            while m.selection.parent:
+                m.selection = m.selection.parent
+            return stepCount
+        rand = random.randint(0, 3)
+        if rand == 1:
+            if m.selection.left:
+                m.selection = m.selection.left
+                stepCount = stepCount + 1
+        if rand == 2:
+            if m.selection.right:
+                m.selection = m.selection.right
+                stepCount = stepCount + 1
+        if rand == 3:
+            if m.selection.parent:
+                m.selection = m.selection.parent
+                stepCount = stepCount + 1
+
+
+def breadth_first_search(tar):
+    stepCount = 0
+    tempArray = [m.selection]
+    while len(tempArray) > 0:
+        curNode = tempArray[0]
+        if curNode.value == tar:
+            while m.selection.parent:
+                m.selection = m.selection.parent
+            return stepCount
+        if curNode.left:
+            tempArray.append(curNode.left)
+        if curNode.right:
+            tempArray.append(curNode.right)
+        tempArray.pop(0)
+        stepCount = stepCount + 1
+
+
+def depth_first_search(tar):
+    stepCount = 0
+    tempArray = [m.selection]
+    while len(tempArray) > 0:
+        curNode = tempArray.pop()
+        if curNode.value == tar:
+            return stepCount
+        stepCount = stepCount + 1
+        if curNode.right:
+            tempArray.append(curNode.right)
+        if curNode.left:
+            tempArray.append(curNode.left)
+
+
+def prev_random_search():
     stepCount = 0
     tempArray = [0 for x in range(m.nodecount + 1)]
     tempArray[0] = 1
@@ -309,12 +368,14 @@ def random_search():
 m = Master()
 
 root = build_full_tree()
-random_search()
+target = 9
+randCount = random_search(target)
+breadthCount = breadth_first_search(target)
+depthCount = depth_first_search(target)
 
-print("count: %d" % m.nodecount)
-print("layers: %d" % (len(m.nodelist) + 1))
-print("root kids")
-print(root.count_children())
+print("Number of steps for rand: " + str(randCount))
+print("Number of steps for breadth: " + str(breadthCount))
+print("Number of steps for depth: " + str(depthCount))
 
 while True:
     m.clock.tick(60)

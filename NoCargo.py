@@ -92,6 +92,8 @@ class Node(object):
                 children = 1
                 children += self.right.count_children()
                 mod = -(children * X_STEP)
+            if self.parent.right:
+                mod = mod - 30
         elif self.type == "right":
             mod = X_STEP
             children = 0

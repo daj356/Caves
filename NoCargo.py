@@ -8,11 +8,11 @@ import pyttsx3
 # Initializes pygame
 pygame.init()
 
-# Sets the current window caption
-pygame.display.set_caption("Spelunker")
-
 # Get the screen resolution
 screen = pygame.display.set_mode((1280, 800), FULLSCREEN)
+
+# Sets the current window caption
+pygame.display.set_caption("Spelunker")
 
 # Control how held keys are repeated: set_repeat(delay [ms], interval [ms])
 pygame.key.set_repeat(200, 20)
@@ -62,7 +62,7 @@ KEYBOARD_PAN_STEP = 50
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
 class Master(object):
     def __init__(self):
-        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
         # nodelist - a 2d array of nodes sorted by depth level,
         # it is initialized as empty, layers added as needed
         self.nodelist = []
@@ -96,7 +96,7 @@ class Node(object):
             mod = 0
             x = ROOT_X
         elif self.type == "left":
-            mod = -(X_STEP)
+            mod = -X_STEP
             children = 0
             if self.right:
                 children = 1
@@ -125,11 +125,14 @@ class Node(object):
                 tempArray[0] = tempArray[0] + 25
                 mod = mod + 25
         arrayOfCoords.append(tempArray)
-        print(arrayOfCoords)
+        # ARRAY COORDS DOES WHAT
+        # print(arrayOfCoords)
         self.rect = pygame.rect.Rect((x + mod, y), BOX_SIZE)
 
     def draw(self):
 
+        #pic = pygame.image.load(r'resources/pic.png')
+        #pic = pygame.transform.scale(pic, (30, 30))
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
                                 self.rect.width, self.rect.height)
         if BOX_SIZE[0] >= 10:  # skip text if box is too small
@@ -137,6 +140,7 @@ class Node(object):
             tr = text.get_rect()
             tr.center = rect.center
             m.display.blit(text, tr)
+            #m.display.blit(pic, tr)
         pygame.draw.rect(m.display, BLUE, rect, 1)
         if self.parent:
             start = (rect.centerx, rect.top)
@@ -425,6 +429,7 @@ def prev_depth_first():
 
 # initialization
 m = Master()
+
 
 root = build_full_tree()
 target = 9

@@ -43,7 +43,7 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 15
+NUM_OF_NODES = 25
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
@@ -57,7 +57,7 @@ class Master(object):
         # nodelist - a 2d array of nodes sorted by depth level,
         # it is initialized as empty, layers added as needed
         self.nodelist = []
-        self.nodecount = 0
+        self.nodecount = 1
         self.x_shift = 0
         self.y_shift = 0
         self.clock = pygame.time.Clock()
@@ -81,7 +81,8 @@ class Node(object):
     def __str__(self):  # Used to give information about the depth. Displayed at bottom of the screen.
         return "NODE depth: %d" % self.depth
 
-    def set_rect(self):
+    def set_rect(self, arrayOfCoords):
+        tempArray = []
         if self.type == "root":
             mod = 0
             x = ROOT_X
@@ -92,8 +93,6 @@ class Node(object):
                 children = 1
                 children += self.right.count_children()
                 mod = -(children * X_STEP)
-            if self.parent.right:
-                mod = mod - 30
         elif self.type == "right":
             mod = X_STEP
             children = 0
@@ -108,6 +107,17 @@ class Node(object):
         if self.type in ["left", "right"]:
             x = self.parent.rect.left
         y = Y_START + Y_STEP * self.depth
+        tempArray.append(x+mod)
+        tempArray.append(y)
+        if tempArray in arrayOfCoords:
+            if self.type == "right":
+                tempArray[0] = tempArray[0] - 25
+                mod = mod - 25
+            if self.type == "left":
+                tempArray[0] = tempArray[0] + 25
+                mod = mod + 25
+        arrayOfCoords.append(tempArray)
+        print(arrayOfCoords)
         self.rect = pygame.rect.Rect((x + mod, y), BOX_SIZE)
 
     def draw(self):
@@ -150,6 +160,7 @@ def interface():
             if event.key in [K_q, K_ESCAPE]:
                 quit()
             elif event.key == K_r:
+                m.nodecount = 1
                 build_tree()
             elif event.key == K_w:
                 m.y_shift += KEYBOARD_PAN_STEP
@@ -283,9 +294,10 @@ def walk_tree(leaf):
 
 
 def set_all_rects():
+    arrayOfCoords = []
     for layer in m.nodelist:
         for node in layer:
-            node.set_rect()
+            node.set_rect(arrayOfCoords)
 
 
 def random_search(tar):
@@ -311,6 +323,7 @@ def random_search(tar):
                 stepCount = stepCount + 1
 
 
+# Block of code used to run a breadth first search for cave with the value of "tar"
 def breadth_first_search(tar):
     stepCount = 0
     tempArray = [m.selection]
@@ -328,6 +341,7 @@ def breadth_first_search(tar):
         stepCount = stepCount + 1
 
 
+# Block of code that will be used to depth first search for the cave will a value of "tar"
 def depth_first_search(tar):
     stepCount = 0
     tempArray = [m.selection]
@@ -342,6 +356,7 @@ def depth_first_search(tar):
             tempArray.append(curNode.left)
 
 
+# Code may be scrapped later, unsure as to what to do with it right now.
 def prev_random_search():
     stepCount = 0
     tempArray = [0 for x in range(m.nodecount + 1)]
@@ -364,6 +379,25 @@ def prev_random_search():
                 m.selection = m.selection.parent
                 stepCount = stepCount + 1
     print("Steps number for random search: " + str(stepCount))
+
+
+# Work in progress code, may not be needed
+def prev_depth_first():
+    stepCount = 0
+    visitArray = [0 for x in range(m.nodecount + 1)]
+    visitArray[0] = 1
+    valueArray = []
+    while 0 in visitArray:
+        stepCount = stepCount + 1
+        if m.selection.left and m.selection.left.value not in valueArray:
+            m.selection = m.selection.left
+        elif m.selection.right and m.selection.right.value not in valueArray:
+            m.selection = m.selection.right
+        else:
+            valueArray.append(m.selection.value)
+            visitArray[m.selection.value] = 1
+            m.selection = m.selection.parent
+    print("Step for depth first: " + str(stepCount))
 
 
 # initialization

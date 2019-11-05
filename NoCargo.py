@@ -5,21 +5,30 @@ import random
 from pygame.locals import *
 import pyttsx3
 
-WIDTH = 800
-HEIGHT = 600
-# os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WIDTH/2, HEIGHT/2)
-
+# Initializes pygame
 pygame.init()
+
+# Sets the current window caption
+pygame.display.set_caption("Spelunker")
+
+# Get the screen resolution
+screen = pygame.display.set_mode((1280, 800), FULLSCREEN)
+
+# Control how held keys are repeated: set_repeat(delay [ms], interval [ms])
+pygame.key.set_repeat(200, 20)
+
+# infoObject contains information about the users display settings e.g. resolution
+infoObject = pygame.display.Info()
+
 # Center the Game Application
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
-pygame.display.set_caption("Spelunker")
-pygame.key.set_repeat(200, 20)
-# infoObject contains information about the users display settings e.g. resolution
-infoObject = pygame.display.Info()
-# Display should fit to users resolution
-# IMPORTANT: WANT THIS TO BE FULLSCREEN, CURRENTLY GETS CUT OFF AT THE BOTTOM
-screen = pygame.display.set_mode([WIDTH, HEIGHT])
+# Gets the width and height of the screen
+area = screen.get_rect()
+
+# WIDTH and HEIGHT
+WIDTH, HEIGHT = area[2], area[3]
+
 # RGB colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -43,7 +52,7 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 25
+NUM_OF_NODES = 10
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
@@ -101,8 +110,7 @@ class Node(object):
                 children += self.left.count_children()
                 mod = children * X_STEP
         else:
-            print
-            "unhandled case in set_rect()"
+            print("unhandled case in set_rect()")
             sys.exit(1)
         if self.type in ["left", "right"]:
             x = self.parent.rect.left
@@ -121,6 +129,7 @@ class Node(object):
         self.rect = pygame.rect.Rect((x + mod, y), BOX_SIZE)
 
     def draw(self):
+
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
                                 self.rect.width, self.rect.height)
         if BOX_SIZE[0] >= 10:  # skip text if box is too small
@@ -146,13 +155,13 @@ class Node(object):
 
 
 def quit():
-    print
-    "QUIT"
+    print("QUIT")
     pygame.quit()
     sys.exit()
 
 
 def interface():
+    global LAST
     for event in pygame.event.get():
         if event.type == QUIT:
             quit()
@@ -162,6 +171,7 @@ def interface():
             elif event.key == K_r:
                 m.nodecount = 1
                 build_tree()
+                ''' Kept these just in case
             elif event.key == K_w:
                 m.y_shift += KEYBOARD_PAN_STEP
             elif event.key == K_s:
@@ -170,23 +180,34 @@ def interface():
                 m.x_shift += KEYBOARD_PAN_STEP
             elif event.key == K_d:
                 m.x_shift -= KEYBOARD_PAN_STEP
+                '''
             elif event.key == K_UP:
                 if m.selection.parent:
                     m.selection = m.selection.parent
+                    if LAST == "left":
+                        m.x_shift = WIDTH / 2 - m.selection.rect[0]
+                        m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                    elif LAST == "right":
+                        m.x_shift = WIDTH / 2 - m.selection.rect[0]
+                        m.y_shift = HEIGHT / 2 - m.selection.rect[1]
                 else:
                     print("no parent to be selected")
             elif event.key == K_LEFT:
                 if m.selection.left:
                     m.selection = m.selection.left
+                    m.x_shift = WIDTH / 2 - m.selection.rect[0]
+                    m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                    LAST = "left"
                 else:
-                    insert_node_left(m.selection, m.selection.depth)
-                    set_all_rects()
+                    print("no left-child to be selected")
             elif event.key == K_RIGHT:
                 if m.selection.right:
                     m.selection = m.selection.right
+                    m.x_shift = WIDTH / 2 - m.selection.rect[0]
+                    m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                    LAST = "right"
                 else:
-                    insert_node_right(m.selection, m.selection.depth)
-                    set_all_rects()
+                    print("no right-child to be selected")
             else:
                 print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
 
@@ -202,7 +223,7 @@ def draw():
         pygame.draw.rect(m.display, RED, s_rect, 4)
 
         # Node Info
-        text = FONT2.render("Node depth: %d" % (m.selection.depth), 1, (200, 255, 255))
+        text = FONT2.render("Node depth: %d" % m.selection.depth, 1, (200, 255, 255))
         trect = text.get_rect()
         trect.center = m.display.get_rect().center
         trect.bottom = m.display.get_rect().bottom - 10
@@ -273,6 +294,7 @@ def add_new_node(leaf, depth):
 
 
 def insert_node_right(node, depth):
+    #print("insert_node_right \nnode.rect: ", node.rect)
     node.right = Node(parent=node)
     node.right.type = "right"
     node.right.depth = depth + 1
@@ -280,6 +302,7 @@ def insert_node_right(node, depth):
 
 
 def insert_node_left(node, depth):
+    #print("insert_node_left \nnode.rect: ", node.rect)
     node.left = Node(parent=node)
     node.left.type = "left"
     node.left.depth = depth + 1

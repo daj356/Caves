@@ -131,8 +131,8 @@ class Node(object):
 
     def draw(self):
 
-        #pic = pygame.image.load(r'resources/pic.png')
-        #pic = pygame.transform.scale(pic, (30, 30))
+        # pic = pygame.image.load(r'resources/pic.png')
+        # pic = pygame.transform.scale(pic, (30, 30))
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
                                 self.rect.width, self.rect.height)
         if BOX_SIZE[0] >= 10:  # skip text if box is too small
@@ -263,7 +263,7 @@ def build_tree():
     return root
 
 
-def build_full_tree():
+def build_rand_tree():
     root = create_root_node()
     m.selection = root
     while root.count_children() < NUM_OF_NODES:
@@ -288,6 +288,113 @@ def build_full_tree():
             m.selection = m.selection.parent
     return root
 
+
+def build_full_tree():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.left
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.right
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.left
+    insert_both(root, root.depth)
+
+    set_all_rects()
+    return root
+
+
+def build_comp_tree():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.left
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+
+
+    set_all_rects()
+    return root
+
+
+def build_perfect_tree():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.left
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.right
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+
+    set_all_rects()
+    return root
+
+
+def insert_both(root, depth):
+    insert_node_left(root, depth)
+    insert_node_right(root, depth)
+
+
+
+# Degenerate tree
+def build_degen_tree():
+    root = create_root_node()
+    m.selection = root
+    # Randomly chooses if degen tree should be left or right
+    rand = random.randint(0, 1)
+    if rand == 0:
+        while root.count_children() < NUM_OF_NODES:
+            # If/else statement creates node.
+            if m.selection.left:
+                m.selection = m.selection.left
+            else:
+                insert_node_left(m.selection, m.selection.depth)
+                set_all_rects()
+
+    if rand == 1:
+        while root.count_children() < 6:
+            if m.selection.right:
+                m.selection = m.selection.right
+            else:
+                insert_node_right(m.selection, m.selection.depth)
+                set_all_rects()
+
+    return root
 
 def add_new_node(leaf, depth):
     try:
@@ -431,8 +538,9 @@ def prev_depth_first():
 m = Master()
 
 
-root = build_full_tree()
+root = build_comp_tree()
 target = 9
+"""""
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
 depthCount = depth_first_search(target)
@@ -440,7 +548,7 @@ depthCount = depth_first_search(target)
 print("Number of steps for rand: " + str(randCount))
 print("Number of steps for breadth: " + str(breadthCount))
 print("Number of steps for depth: " + str(depthCount))
-
+"""
 while True:
     m.clock.tick(60)
     interface()

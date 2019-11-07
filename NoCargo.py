@@ -35,8 +35,14 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 
 # Fonts
+
+# Game Fonts
+TITLE_FONT = "INVASION2000.TTF"
+OPTIONS_FONT = "dpcomic.ttf"
+
 droidsans = pygame.font.match_font("verdana")
 FONT = pygame.font.Font(droidsans, 16)
 FONT2 = pygame.font.Font(droidsans, 24)
@@ -44,7 +50,7 @@ FONT2 = pygame.font.Font(droidsans, 24)
 ROOT_X = WIDTH / 2
 # BOX_SIZE is used to determine the size of the box obviously, but it's also used to change the X and Y Step,
 # which is how far the box is from the starting point.
-BOX_SIZE = (25, 25)
+BOX_SIZE = (75, 75)
 X_STEP = BOX_SIZE[0] + 10
 
 Y_START = 200
@@ -71,6 +77,106 @@ class Master(object):
         self.y_shift = 0
         self.clock = pygame.time.Clock()
         self.selection = None
+
+    # Text Renderer
+    def text_format(self, message, textFont, textSize, textColor):
+        newFont = pygame.font.Font(textFont, textSize)
+        newText = newFont.render(message, 0, textColor)
+        return newText
+
+    # Main Menu
+    def intro_screen(self):
+        index = 0
+        # add "info" back to the list below
+        menu_selection_list = ["start", "quit"]
+        intro_screen = True
+        selected = menu_selection_list[index]
+
+        while intro_screen:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        index += 1
+                        if index == 3:
+                            index = 0
+                        selected = menu_selection_list[index]
+                        print(index)
+                    if event.key == pygame.K_UP:
+                        index -= 1
+                        if index == -1:
+                            index = 2
+                        selected = menu_selection_list[index]
+                        print(index)
+                    elif event.key == pygame.K_RETURN:
+                        if selected == "start":
+                            intro_screen = False
+                        if selected == "quit":
+                            quit()
+                            '''
+                        if selected == "info":
+                            intro_screen = False
+                            m.info_screen()
+                            '''
+            index %= len(menu_selection_list)
+
+            # Main Menu UI
+            screen.fill(BLACK)
+            title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
+            if selected == "start":
+                text_start = self.text_format("START", OPTIONS_FONT, 85, YELLOW)
+            else:
+                text_start = self.text_format("START", OPTIONS_FONT, 75, WHITE)
+
+            if selected == "quit":
+                text_quit = self.text_format("QUIT", OPTIONS_FONT, 85, YELLOW)
+            else:
+                text_quit = self.text_format("QUIT", OPTIONS_FONT, 75, WHITE)
+
+            if selected == "info":
+                text_info = self.text_format("INFO", OPTIONS_FONT, 85, YELLOW)
+            else:
+                text_info = self.text_format("INFO", OPTIONS_FONT, 75, WHITE)
+
+            title_rect = title.get_rect()
+            start_rect = text_start.get_rect()
+            quit_rect = text_quit.get_rect()
+            info_rect = text_info.get_rect()
+
+            # Main Menu Text
+            screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
+            screen.blit(text_start, (WIDTH / 2 - (start_rect[2] / 2), 250))
+            screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 320))
+            screen.blit(text_info, (WIDTH / 2 - (info_rect[2] / 2), 390))
+            pygame.display.update()
+            self.clock.tick(60)
+            pygame.display.set_caption("Main Menu")
+    '''
+    def info_screen(self):
+        info_screen = True
+        selected = start
+
+        # if event.key == pygame.K_RETURN:
+        # if selected == "start":
+        #     info_screen = False
+
+        # Main Menu UI
+        screen.fill(BLACK)
+        title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
+        if selected == "start":
+            text_start = self.text_format("START", OPTIONS_FONT, 85, YELLOW)
+
+        title_rect = title.get_rect()
+        start_rect = text_start.get_rect()
+
+        # Main Menu Text
+        screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
+        screen.blit(text_start, (WIDTH / 2 - (start_rect[2] / 2), 250))
+        # screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 320))
+        # screen.blit(text_info, (WIDTH / 2 - (info_rect[2] / 2), 390))
+        pygame.display.update()
+        self.clock.tick(60)
+        pygame.display.set_caption("Info")
+        '''
 
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
@@ -119,11 +225,11 @@ class Node(object):
         tempArray.append(y)
         if tempArray in arrayOfCoords:
             if self.type == "right":
-                tempArray[0] = tempArray[0] - 25
-                mod = mod - 25
+                tempArray[0] = tempArray[0] - 80
+                mod = mod - 80
             if self.type == "left":
-                tempArray[0] = tempArray[0] + 25
-                mod = mod + 25
+                tempArray[0] = tempArray[0] + 80
+                mod = mod + 80
         arrayOfCoords.append(tempArray)
         # ARRAY COORDS DOES WHAT
         # print(arrayOfCoords)
@@ -536,9 +642,9 @@ def prev_depth_first():
 
 # initialization
 m = Master()
-
-
+m.intro_screen()
 root = build_comp_tree()
+
 target = 9
 
 randCount = random_search(target)

@@ -94,30 +94,27 @@ class Master(object):
 
         while intro_screen:
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:
-                        index += 1
-                        if index == 3:
-                            index = 0
-                        selected = menu_selection_list[index]
-                        print(index)
                     if event.key == pygame.K_UP:
-                        index -= 1
-                        if index == -1:
-                            index = 2
-                        selected = menu_selection_list[index]
-                        print(index)
-                    elif event.key == pygame.K_RETURN:
+                        selected = "start"
+                    elif event.key == pygame.K_DOWN:
+                        selected = "quit"
+                    if event.key == pygame.K_RETURN:
                         if selected == "start":
                             intro_screen = False
                         if selected == "quit":
+                            pygame.quit()
                             quit()
+
                             '''
                         if selected == "info":
                             intro_screen = False
                             m.info_screen()
                             '''
-            index %= len(menu_selection_list)
+            #index %= len(menu_selection_list)
 
             # Main Menu UI
             screen.fill(BLACK)
@@ -132,21 +129,14 @@ class Master(object):
             else:
                 text_quit = self.text_format("QUIT", OPTIONS_FONT, 75, WHITE)
 
-            if selected == "info":
-                text_info = self.text_format("INFO", OPTIONS_FONT, 85, YELLOW)
-            else:
-                text_info = self.text_format("INFO", OPTIONS_FONT, 75, WHITE)
-
             title_rect = title.get_rect()
             start_rect = text_start.get_rect()
             quit_rect = text_quit.get_rect()
-            info_rect = text_info.get_rect()
 
             # Main Menu Text
             screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
             screen.blit(text_start, (WIDTH / 2 - (start_rect[2] / 2), 250))
             screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 320))
-            screen.blit(text_info, (WIDTH / 2 - (info_rect[2] / 2), 390))
             pygame.display.update()
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")

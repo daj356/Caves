@@ -540,7 +540,7 @@ m = Master()
 
 root = build_comp_tree()
 target = 9
-"""""
+
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
 depthCount = depth_first_search(target)
@@ -548,7 +548,7 @@ depthCount = depth_first_search(target)
 print("Number of steps for rand: " + str(randCount))
 print("Number of steps for breadth: " + str(breadthCount))
 print("Number of steps for depth: " + str(depthCount))
-"""
+
 while True:
     m.clock.tick(60)
     interface()

@@ -114,7 +114,7 @@ class Master(object):
                             intro_screen = False
                             m.info_screen()
                             '''
-            #index %= len(menu_selection_list)
+            # index %= len(menu_selection_list)
 
             # Main Menu UI
             screen.fill(BLACK)
@@ -140,6 +140,7 @@ class Master(object):
             pygame.display.update()
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
+
     '''
     def info_screen(self):
         info_screen = True
@@ -211,7 +212,7 @@ class Node(object):
         if self.type in ["left", "right"]:
             x = self.parent.rect.left
         y = Y_START + Y_STEP * self.depth
-        tempArray.append(x+mod)
+        tempArray.append(x + mod)
         tempArray.append(y)
         if tempArray in arrayOfCoords:
             if self.type == "right":
@@ -236,7 +237,7 @@ class Node(object):
             tr = text.get_rect()
             tr.center = rect.center
             m.display.blit(text, tr)
-            #m.display.blit(pic, tr)
+            # m.display.blit(pic, tr)
         pygame.draw.rect(m.display, BLUE, rect, 1)
         if self.parent:
             start = (rect.centerx, rect.top)
@@ -428,7 +429,6 @@ def build_comp_tree():
     insert_both(root, root.depth)
     root = m.selection
 
-
     set_all_rects()
     return root
 
@@ -466,7 +466,6 @@ def insert_both(root, depth):
     insert_node_right(root, depth)
 
 
-
 # Degenerate tree
 def build_degen_tree():
     root = create_root_node()
@@ -492,6 +491,7 @@ def build_degen_tree():
 
     return root
 
+
 def add_new_node(leaf, depth):
     try:
         m.nodelist[depth].append(leaf)
@@ -501,7 +501,7 @@ def add_new_node(leaf, depth):
 
 
 def insert_node_right(node, depth):
-    #print("insert_node_right \nnode.rect: ", node.rect)
+    # print("insert_node_right \nnode.rect: ", node.rect)
     node.right = Node(parent=node)
     node.right.type = "right"
     node.right.depth = depth + 1
@@ -509,7 +509,7 @@ def insert_node_right(node, depth):
 
 
 def insert_node_left(node, depth):
-    #print("insert_node_left \nnode.rect: ", node.rect)
+    # print("insert_node_left \nnode.rect: ", node.rect)
     node.left = Node(parent=node)
     node.left.type = "left"
     node.left.depth = depth + 1
@@ -630,10 +630,22 @@ def prev_depth_first():
     print("Step for depth first: " + str(stepCount))
 
 
+def talk(say):
+    engine.say(say)
+    engine.runAndWait()
+
+
 # initialization
 m = Master()
+engine = pyttsx3.init()
+engine.setProperty('rate', 115)  # Speed percent
+voices = engine.getProperty('voices')
+talk("testing")
 m.intro_screen()
+talk("test0")
+talk("test1")
 root = build_comp_tree()
+talk("test2")
 
 target = 9
 
@@ -652,5 +664,4 @@ while True:
     draw()
     pygame.display.flip()
 
-
-#TEST MOHAMAD
+# TEST MOHAMAD

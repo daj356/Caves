@@ -1,9 +1,9 @@
+import gtts
 import pygame
 import sys
 import os
 import random
 from pygame.locals import *
-import pyttsx3
 
 # Initializes pygame
 pygame.init()
@@ -77,6 +77,7 @@ class Master(object):
         self.y_shift = 0
         self.clock = pygame.time.Clock()
         self.selection = None
+        self.sound = 0
 
     # Text Renderer
     def text_format(self, message, textFont, textSize, textColor):
@@ -631,21 +632,21 @@ def prev_depth_first():
 
 
 def talk(say):
-    engine.say(say)
-    engine.runAndWait()
+    tts = gtts.gTTS(text=say, lang="en-us")
+    tts.save("soundFile" + str(m.sound) + ".mp3")
+    pygame.mixer.music.load("soundFile" + str(m.sound) + ".mp3")
+    m.sound += 1
+    pygame.mixer.music.play()
 
 
 # initialization
 m = Master()
-engine = pyttsx3.init()
-engine.setProperty('rate', 115)  # Speed percent
-voices = engine.getProperty('voices')
-talk("testing")
+talk("Hello")
 m.intro_screen()
-talk("test0")
-talk("test1")
+talk("I am going to write a really long sentence just to test out what will happen if I allow a tts program to go for "
+     "this long I wonder what will happen.")
 root = build_comp_tree()
-talk("test2")
+talk("This is my final test.")
 
 target = 9
 
@@ -663,5 +664,3 @@ while True:
     m.display.fill(BLACK)
     draw()
     pygame.display.flip()
-
-# TEST MOHAMAD

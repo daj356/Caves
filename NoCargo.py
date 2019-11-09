@@ -85,6 +85,23 @@ class Master(object):
         newText = newFont.render(message, 0, textColor)
         return newText
 
+    def talk(self, say):
+        tts = gtts.gTTS(text=say, lang="en-us")
+        tts.save("soundFile" + str(m.sound) + ".mp3")
+        pygame.mixer.music.load("soundFile" + str(m.sound) + ".mp3")
+        m.sound += 1
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy() is 1:
+            print(".")
+
+    def reset(self):
+        self.nodelist = []
+        self.nodecount = 1
+        self.x_shift = 0
+        self.y_shift = 0
+        self.clock = pygame.time.Clock()
+        self.selection = None
+
     # Main Menu
     def intro_screen(self):
         index = 0
@@ -106,6 +123,7 @@ class Master(object):
                     if event.key == pygame.K_RETURN:
                         if selected == "start":
                             intro_screen = False
+                            pygame.display.flip()
                         if selected == "quit":
                             pygame.quit()
                             quit()
@@ -169,7 +187,6 @@ class Master(object):
         self.clock.tick(60)
         pygame.display.set_caption("Info")
         '''
-
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
 # and right and the depth.
@@ -254,7 +271,6 @@ class Node(object):
             count += 1
             count += self.right.count_children()
         return count
-
 
 def quit():
     print("QUIT")
@@ -346,7 +362,6 @@ def create_root_node():
     root = Node(depth=0)
     root.type = "root"
     add_new_node(root, 0)
-    m.nodecount += 1
     return root
 
 
@@ -631,22 +646,27 @@ def prev_depth_first():
     print("Step for depth first: " + str(stepCount))
 
 
-def talk(say):
-    tts = gtts.gTTS(text=say, lang="en-us")
-    tts.save("soundFile" + str(m.sound) + ".mp3")
-    pygame.mixer.music.load("soundFile" + str(m.sound) + ".mp3")
-    m.sound += 1
-    pygame.mixer.music.play()
+def build():
+    m.display.fill(BLACK)
+    draw()
+    pygame.display.flip()
 
 
 # initialization
 m = Master()
-talk("Hello")
 m.intro_screen()
-talk("I am going to write a really long sentence just to test out what will happen if I allow a tts program to go for "
-     "this long I wonder what will happen.")
+m.talk("d")
 root = build_comp_tree()
-talk("This is my final test.")
+build()
+m.talk("c")
+m.reset()
+root = build_rand_tree()
+build()
+m.talk("a")
+m.reset()
+root = build_full_tree()
+build()
+m.talk("b")
 
 target = 9
 

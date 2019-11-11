@@ -1,9 +1,13 @@
-import gtts
 import pygame
 import sys
 import os
 import random
+import pyttsx3
 from pygame.locals import *
+
+engine = pyttsx3.init()
+engine.setProperty('rate', 115)  # Speed percent
+voices = engine.getProperty('voices')
 
 # Initializes pygame
 pygame.init()
@@ -50,7 +54,7 @@ FONT2 = pygame.font.Font(droidsans, 24)
 ROOT_X = WIDTH / 2
 # BOX_SIZE is used to determine the size of the box obviously, but it's also used to change the X and Y Step,
 # which is how far the box is from the starting point.
-BOX_SIZE = (75, 75)
+BOX_SIZE = (25, 25)
 X_STEP = BOX_SIZE[0] + 10
 
 Y_START = 200
@@ -66,6 +70,11 @@ KEYBOARD_PAN_STEP = 50
 # A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
 # they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
+def talk(say):
+    engine.say(say)
+    engine.runAndWait()
+
+
 class Master(object):
     def __init__(self):
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
@@ -84,15 +93,6 @@ class Master(object):
         newFont = pygame.font.Font(textFont, textSize)
         newText = newFont.render(message, 0, textColor)
         return newText
-
-    def talk(self, say):
-        tts = gtts.gTTS(text=say, lang="en-us")
-        tts.save("soundFile" + str(m.sound) + ".mp3")
-        pygame.mixer.music.load("soundFile" + str(m.sound) + ".mp3")
-        m.sound += 1
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy() is 1:
-            print(".")
 
     def reset(self):
         self.nodelist = []
@@ -188,6 +188,7 @@ class Master(object):
         pygame.display.set_caption("Info")
         '''
 
+
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
 # and right and the depth.
 class Node(object):
@@ -234,11 +235,11 @@ class Node(object):
         tempArray.append(y)
         if tempArray in arrayOfCoords:
             if self.type == "right":
-                tempArray[0] = tempArray[0] - 80
-                mod = mod - 80
+                tempArray[0] = tempArray[0] - 30
+                mod = mod - 30
             if self.type == "left":
-                tempArray[0] = tempArray[0] + 80
-                mod = mod + 80
+                tempArray[0] = tempArray[0] + 30
+                mod = mod + 30
         arrayOfCoords.append(tempArray)
         # ARRAY COORDS DOES WHAT
         # print(arrayOfCoords)
@@ -271,6 +272,7 @@ class Node(object):
             count += 1
             count += self.right.count_children()
         return count
+
 
 def quit():
     print("QUIT")
@@ -654,19 +656,24 @@ def build():
 
 # initialization
 m = Master()
+talk("Hello and welcome to Spelunkster 3000")
 m.intro_screen()
-m.talk("d")
+talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
+     "science. A binary tree can be visualized like a system of caves, where every cave can have zero, one, "
+     "or two caves connected to it. Let's look at an example.")
 root = build_comp_tree()
 build()
-m.talk("c")
+talk("This is an example of a binary tree known as a 'complete binary tree'. A binary tree is complete if looking top "
+     "to bottom, and left to right, there are no empty spaces until the end of the cave system. Because there are no "
+     "missing nodes in between the first cave and the last, this tree is considered 'complete'.")
 m.reset()
 root = build_rand_tree()
 build()
-m.talk("a")
+talk("a")
 m.reset()
 root = build_full_tree()
 build()
-m.talk("b")
+talk("b")
 
 target = 9
 

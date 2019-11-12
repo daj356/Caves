@@ -622,50 +622,6 @@ def depth_first_search(tar):
             tempArray.append(curNode.left)
 
 
-# Code may be scrapped later, unsure as to what to do with it right now.
-def prev_random_search():
-    stepCount = 0
-    tempArray = [0 for x in range(m.nodecount + 1)]
-    tempArray[0] = 1
-    tempArray[2] = 1
-    while 0 in tempArray:
-        m.selection.visit = 1
-        tempArray[m.selection.value] = 1
-        rand = random.randint(0, 3)
-        if rand == 1:
-            if m.selection.left:
-                m.selection = m.selection.left
-                stepCount = stepCount + 1
-        if rand == 2:
-            if m.selection.right:
-                m.selection = m.selection.right
-                stepCount = stepCount + 1
-        if rand == 3:
-            if m.selection.parent:
-                m.selection = m.selection.parent
-                stepCount = stepCount + 1
-    print("Steps number for random search: " + str(stepCount))
-
-
-# Work in progress code, may not be needed
-def prev_depth_first():
-    stepCount = 0
-    visitArray = [0 for x in range(m.nodecount + 1)]
-    visitArray[0] = 1
-    valueArray = []
-    while 0 in visitArray:
-        stepCount = stepCount + 1
-        if m.selection.left and m.selection.left.value not in valueArray:
-            m.selection = m.selection.left
-        elif m.selection.right and m.selection.right.value not in valueArray:
-            m.selection = m.selection.right
-        else:
-            valueArray.append(m.selection.value)
-            visitArray[m.selection.value] = 1
-            m.selection = m.selection.parent
-    print("Step for depth first: " + str(stepCount))
-
-
 def build():
     m.display.fill(BLACK)
     draw()

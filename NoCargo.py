@@ -353,7 +353,7 @@ def draw():
         m.display.blit(text, trect)
 
         # Help
-        help = FONT.render("WASD - pan, UP - go to parent, LEFT/RIGHT - travel down tree", 1, (255, 180, 180))
+        help = FONT.render("UP - go to parent, LEFT/RIGHT - travel down tree", 1, (255, 180, 180))
         help2 = FONT.render("R - create new random tree", 1, WHITE)
         hrect = help.get_rect()
         hrect.centerx = trect.centerx
@@ -404,6 +404,21 @@ def build_rand_tree():
     for x in range(NUM_OF_NODES):
         if m.selection.parent:
             m.selection = m.selection.parent
+    return root
+
+
+def build_single_root():
+    root = create_root_node()
+    m.selection = root
+    set_all_rects()
+    return root
+
+
+def parent_with_two_children():
+    root = build_single_root()
+    m.selection = root
+    insert_both(root, root.depth)
+    set_all_rects()
     return root
 
 
@@ -659,24 +674,58 @@ def build():
 
 # initialization
 m = Master()
-talk("Hello and welcome to Spelunkster 3000")
 m.intro_screen()
+talk("Hello and welcome to Spelunkster 3000")
+
+
+root = build_single_root()
+build()
 talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
-     "science. A binary tree can be visualized like a system of caves, where every cave can have zero, one, "
-     "or two caves connected to it. Let's look at an example.")
+     "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
+     "of a parent cave is shown on the screen.")
+
+m.reset()
+root = parent_with_two_children()
+build()
+talk("Every parent cave can have one, two, or no children caves (also known as leaves). "
+     "A parent with two children is shown on the screen.")
+
+
+m.reset()
 root = build_comp_tree()
 build()
-talk("This is an example of a binary tree known as a 'complete binary tree'. A binary tree is complete if looking top "
-     "to bottom, and left to right, there are no empty spaces until the end of the cave system. Because there are no "
-     "missing nodes in between the first cave and the last, this tree is considered 'complete'.")
-m.reset()
-root = build_rand_tree()
-build()
-talk("a")
+talk("Here is an example of a complete binary tree. "
+     "A binary tree is complete if looking top to bottom, and left to right, there are no empty spaces "
+     "until the end of the cave system. Because there are no missing nodes in between the first cave and "
+     "the last, this tree is considered 'complete'.")
+
+
 m.reset()
 root = build_full_tree()
 build()
-talk("b")
+talk("This is also a complete binary tree.")
+
+
+m.reset()
+root = build_rand_tree()
+build()
+talk("Question: Does the cave system shown represent a complete binary tree?")
+talk(" ")
+talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
+
+m.reset()
+root = build_degen_tree()
+build()
+talk("This tree is what we call a degenerate tree. A tree is called a degenerate tree "
+     "where there is only 1 child node for each parent node. It is unbalanced and "
+     "is considered the worst case when it comes to sorting through a tree. ")
+
+m.reset()
+root = build_perfect_tree()
+build()
+talk("This tree is called a perfect binary tree. All interior nodes have two children and "
+     "all of the children caves (also known as leaves) have the same depth in the tree. "
+     "The depth of a tree is a fancy way of representing which level a node is at. ")
 
 target = 9
 

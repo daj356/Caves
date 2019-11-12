@@ -5,7 +5,6 @@ import random
 import pyttsx3
 from pygame.locals import *
 
-# Initializes the text-to-speech function
 engine = pyttsx3.init()
 engine.setProperty('rate', 130)  # Speed percent
 
@@ -20,7 +19,7 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 800), FULLSCREEN)
 
 # Sets the current window caption
-pygame.display.set_caption("Spelunker 3000")
+pygame.display.set_caption("Spelunker")
 
 # Control how held keys are repeated: set_repeat(delay [ms], interval [ms])
 pygame.key.set_repeat(200, 20)
@@ -44,6 +43,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+
+# Fonts
 
 # Game Fonts
 TITLE_FONT = "INVASION2000.TTF"
@@ -90,13 +91,12 @@ class Master(object):
         self.selection = None
         self.sound = 0
 
-    # Formats the text
+    # Text Renderer
     def text_format(self, message, textFont, textSize, textColor):
         newFont = pygame.font.Font(textFont, textSize)
         newText = newFont.render(message, 0, textColor)
         return newText
 
-    # Resets the tree to an empty tree with a single node
     def reset(self):
         self.nodelist = []
         self.nodecount = 1
@@ -206,11 +206,9 @@ class Node(object):
         m.nodecount += 1
         self.value = m.nodecount - 1
 
-    # Provides on-screen depth information for the user at the bottom of the screen
-    def __str__(self):
+    def __str__(self):  # Used to give information about the depth. Displayed at bottom of the screen.
         return "NODE depth: %d" % self.depth
 
-    # Sets the size and location of each node as they are created
     def set_rect(self, arrayOfCoords):
         tempArray = []
         if self.type == "root":
@@ -246,9 +244,10 @@ class Node(object):
                 tempArray[0] = tempArray[0] + 30
                 mod = mod + 30
         arrayOfCoords.append(tempArray)
+        # ARRAY COORDS DOES WHAT
+        # print(arrayOfCoords)
         self.rect = pygame.rect.Rect((x + mod, y), BOX_SIZE)
 
-    # Prints the nodes onto the game window
     def draw(self):
 
         # pic = pygame.image.load(r'resources/pic.png')
@@ -267,7 +266,6 @@ class Node(object):
             end = (self.parent.rect.centerx + m.x_shift, self.parent.rect.bottom + m.y_shift)
             pygame.draw.aaline(m.display, GREEN, start, end)  # This is the line that actually draws the box.
 
-    # Counts the number of children of the current tree being displayed, returns an integer "count"
     def count_children(self):  # Recursive function to count children.
         count = 0
         if self.left:
@@ -278,18 +276,13 @@ class Node(object):
             count += self.right.count_children()
         return count
 
-# Quits the game
+
 def quit():
     print("QUIT")
     pygame.quit()
     sys.exit()
 
-# Allows traversal of current trees,
-# move to parent node (up arrow),
-# move to left child node (left arrow),
-# move to right child node (right arrow)
-# ESC (escape key) OR the letter "q" -- quits the game
-# letter "r" builds a new tree
+
 def interface():
     global LAST
     for event in pygame.event.get():
@@ -341,7 +334,7 @@ def interface():
             else:
                 print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
 
-# Draws the current screen, with the current tree and information on how to traverse the caves
+
 def draw():
     for depth_level in m.nodelist:
         for node in depth_level:
@@ -370,7 +363,6 @@ def draw():
         m.display.blit(help2, hrect)
 
 
-# Creates a single, starting parent node
 def create_root_node():
     root = Node(depth=0)
     root.type = "root"
@@ -378,7 +370,6 @@ def create_root_node():
     return root
 
 
-# Builds a tree based on a single starting parent node
 def build_tree():
     m.nodelist = []
     root = create_root_node()
@@ -389,7 +380,7 @@ def build_tree():
     m.selection = root
     return root
 
-# Builds a randomized tree, with a nodecount of NUM_OF_NODES and a starting parent node with depth 0
+
 def build_rand_tree():
     root = create_root_node()
     m.selection = root
@@ -416,7 +407,6 @@ def build_rand_tree():
     return root
 
 
-# Builds a single parent node as a tree, for displaying an example of a parent node
 def build_single_root():
     root = create_root_node()
     m.selection = root
@@ -424,7 +414,6 @@ def build_single_root():
     return root
 
 
-# Builds a single parent with 2 children nodes, for displaying an example of a parent with 2 children nodes
 def parent_with_two_children():
     root = build_single_root()
     m.selection = root
@@ -432,7 +421,7 @@ def parent_with_two_children():
     set_all_rects()
     return root
 
-# Builds a hard-coded full binary tree. Guaranteed to be a full binary tree
+
 def build_full_tree():
     root = create_root_node()
     m.selection = root
@@ -458,7 +447,6 @@ def build_full_tree():
     return root
 
 
-# Builds a complete binary tree, every parent has 2 children nodes
 def build_comp_tree():
     root = create_root_node()
     m.selection = root
@@ -481,8 +469,6 @@ def build_comp_tree():
     return root
 
 
-# Builds a perfect binary tree, all interior nodes have two children and
-# for every parent node, the two children nodes are at the same depth
 def build_perfect_tree():
     root = create_root_node()
     m.selection = root
@@ -511,13 +497,12 @@ def build_perfect_tree():
     return root
 
 
-# Inserts both a left and a right node for a root (parent) node
 def insert_both(root, depth):
     insert_node_left(root, depth)
     insert_node_right(root, depth)
 
 
-# Builds a degenerate tree, where each parent only has one child
+# Degenerate tree
 def build_degen_tree():
     root = create_root_node()
     m.selection = root
@@ -531,6 +516,7 @@ def build_degen_tree():
             else:
                 insert_node_left(m.selection, m.selection.depth)
                 set_all_rects()
+
     if rand == 1:
         while root.count_children() < 6:
             if m.selection.right:
@@ -538,10 +524,10 @@ def build_degen_tree():
             else:
                 insert_node_right(m.selection, m.selection.depth)
                 set_all_rects()
+
     return root
 
 
-# Adds a new node to the m.nodelist[depth] which allows us to know how many nodes a tree has
 def add_new_node(leaf, depth):
     try:
         m.nodelist[depth].append(leaf)
@@ -550,7 +536,6 @@ def add_new_node(leaf, depth):
         m.nodelist[depth].append(leaf)
 
 
-# Inserts a node to the right for a current tree
 def insert_node_right(node, depth):
     # print("insert_node_right \nnode.rect: ", node.rect)
     node.right = Node(parent=node)
@@ -559,7 +544,6 @@ def insert_node_right(node, depth):
     add_new_node(node.right, depth + 1)
 
 
-# Inserts a node to the left for a current tree
 def insert_node_left(node, depth):
     # print("insert_node_left \nnode.rect: ", node.rect)
     node.left = Node(parent=node)
@@ -568,7 +552,6 @@ def insert_node_left(node, depth):
     add_new_node(node.left, depth + 1)
 
 
-# Recursive function allowing for traversal of a tree
 def walk_tree(leaf):
     if leaf.left:
         walk_tree(leaf.left)
@@ -576,7 +559,6 @@ def walk_tree(leaf):
         walk_tree(leaf.right)
 
 
-# Sets the position of all nodes at all depths
 def set_all_rects():
     arrayOfCoords = []
     for layer in m.nodelist:
@@ -638,7 +620,6 @@ def depth_first_search(tar):
             tempArray.append(curNode.right)
         if curNode.left:
             tempArray.append(curNode.left)
-    print(tempArray)
 
 
 # Code may be scrapped later, unsure as to what to do with it right now.
@@ -685,7 +666,6 @@ def prev_depth_first():
     print("Step for depth first: " + str(stepCount))
 
 
-# Builds the current version of the tree we are wanting
 def build():
     m.display.fill(BLACK)
     draw()
@@ -746,7 +726,6 @@ build()
 talk("This tree is called a perfect binary tree. All interior nodes have two children and "
      "all of the children caves (also known as leaves) have the same depth in the tree. "
      "The depth of a tree is a fancy way of representing which level a node is at. ")
-
 
 target = 9
 

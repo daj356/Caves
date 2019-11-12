@@ -292,6 +292,7 @@ def draw():
         trect.bottom = m.display.get_rect().bottom - 10
         m.display.blit(text, trect)
 
+
         # Help
         help = FONT.render("WASD - pan, UP - go to parent, LEFT/RIGHT - travel down tree", 1, (255, 180, 180))
         help2 = FONT.render("R - create new random tree", 1, WHITE)

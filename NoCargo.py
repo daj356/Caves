@@ -6,8 +6,11 @@ import pyttsx3
 from pygame.locals import *
 
 engine = pyttsx3.init()
-engine.setProperty('rate', 115)  # Speed percent
+engine.setProperty('rate', 130)  # Speed percent
+
 voices = engine.getProperty('voices')
+# Sets a female voice
+engine.setProperty('voice', voices[1].id)
 
 # Initializes pygame
 pygame.init()

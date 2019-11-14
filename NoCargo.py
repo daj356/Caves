@@ -260,8 +260,8 @@ class Node(object):
             text = FONT.render(str(self.value), 1, WHITE)
             tr = text.get_rect()
             tr.center = rect.center
-            # m.display.blit(text, tr)
             m.display.blit(pic, tr)
+            m.display.blit(text, tr)
         pygame.draw.rect(m.display, BLUE, rect, 1)
         if self.parent:
             start = (rect.centerx, rect.top)

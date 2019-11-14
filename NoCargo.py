@@ -290,6 +290,7 @@ def quit():
 def pause():
     pause = True
     while pause is True:
+        build()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_w:
@@ -756,7 +757,7 @@ while loop is True:
     build()
     interface()
     temp = int(m.nodecount) - 1
-    temp2 = int(m.nodecount) / 2
+    temp2 = int(m.nodecount / 2)
     target = random.randint(temp2, temp)
     talk("Now, try and apply what you know about breadth first search and depth first search to try and guess which "
          "search will find cave number " + str(target) + " first. Remember, breadth first search movement preference is"
@@ -774,11 +775,15 @@ while loop is True:
              "This can happen, but it's more likely that a set process will work faster.")
     talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
          "to finish the program.")
-    for event in pygame.event.get():
-        if event.key == K_RETURN:
-            loop = False
-        elif event.key == K_1:
-            break;
+    inputLoop = True
+    while inputLoop is True:
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                if event.key == K_RETURN:
+                    loop = False
+                    inputLoop = False
+                elif event.key == K_1:
+                    inputLoop = False
 talk("Probably going to put in outro here at some point.")
 quit()
 

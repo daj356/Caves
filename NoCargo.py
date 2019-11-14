@@ -279,6 +279,7 @@ class Node(object):
             count += self.right.count_children()
         return count
 
+
 # Quits the game
 def quit():
     print("QUIT")
@@ -286,10 +287,29 @@ def quit():
     sys.exit()
 
 
+def pause():
+    pause = True
+    while pause is True:
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                if event.key == K_w:
+                    m.y_shift += KEYBOARD_PAN_STEP
+                elif event.key == K_s:
+                    m.y_shift -= KEYBOARD_PAN_STEP
+                elif event.key == K_a:
+                    m.x_shift += KEYBOARD_PAN_STEP
+                elif event.key == K_d:
+                    m.x_shift -= KEYBOARD_PAN_STEP
+                elif event.key == K_RETURN:
+                    pause = False
+                else:
+                    print("Invalid key.")
+
+
 def interface():
     global LAST
     inter = True
-    while inter is True and m.nodecount < 10:
+    while inter is True and m.nodecount <= 10:
         build()
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -344,6 +364,7 @@ def interface():
                 else:
                     print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
 
+
 # Draws the current screen, with the current tree and information on how to traverse the caves
 def draw():
     for depth_level in m.nodelist:
@@ -372,12 +393,14 @@ def draw():
         hrect.top -= hrect.height
         m.display.blit(help2, hrect)
 
+
 # Creates a single, starting parent node
 def create_root_node():
     root = Node(depth=0)
     root.type = "root"
     add_new_node(root, 0)
     return root
+
 
 # Builds a tree based on a single starting parent node
 def build_tree():
@@ -389,6 +412,7 @@ def build_tree():
 
     m.selection = root
     return root
+
 
 # Builds a randomized tree, with a nodecount of NUM_OF_NODES and a starting parent node with depth 0
 def build_rand_tree():
@@ -416,12 +440,14 @@ def build_rand_tree():
             m.selection = m.selection.parent
     return root
 
+
 # Builds a single parent node as a tree, for displaying an example of a parent node
 def build_single_root():
     root = create_root_node()
     m.selection = root
     set_all_rects()
     return root
+
 
 # Builds a single parent with 2 children nodes, for displaying an example of a parent with 2 children nodes
 def parent_with_two_children():
@@ -480,6 +506,7 @@ def build_comp_tree():
     set_all_rects()
     return root
 
+
 # Builds a perfect binary tree, all interior nodes have two children and
 # for every parent node, the two children nodes are at the same depth
 def build_perfect_tree():
@@ -508,6 +535,7 @@ def build_perfect_tree():
 
     set_all_rects()
     return root
+
 
 # Inserts both a left and a right node for a root (parent) node
 def insert_both(root, depth):
@@ -538,6 +566,7 @@ def build_degen_tree():
                 set_all_rects()
     return root
 
+
 # Adds a new node to the m.nodelist[depth] which allows us to know how many nodes a tree has
 def add_new_node(leaf, depth):
     try:
@@ -545,6 +574,7 @@ def add_new_node(leaf, depth):
     except:
         m.nodelist.append([])
         m.nodelist[depth].append(leaf)
+
 
 # Inserts a node to the right for a current tree
 def insert_node_right(node, depth):
@@ -554,6 +584,7 @@ def insert_node_right(node, depth):
     node.right.depth = depth + 1
     add_new_node(node.right, depth + 1)
 
+
 # Inserts a node to the left for a current tree
 def insert_node_left(node, depth):
     # print("insert_node_left \nnode.rect: ", node.rect)
@@ -562,12 +593,14 @@ def insert_node_left(node, depth):
     node.left.depth = depth + 1
     add_new_node(node.left, depth + 1)
 
+
 # Recursive function allowing for traversal of a tree
 def walk_tree(leaf):
     if leaf.left:
         walk_tree(leaf.left)
     if leaf.right:
         walk_tree(leaf.right)
+
 
 # Sets the position of all nodes at all depths
 def set_all_rects():
@@ -631,6 +664,7 @@ def depth_first_search(tar):
             tempArray.append(curNode.right)
         if curNode.left:
             tempArray.append(curNode.left)
+
 
 # Builds the current version of the tree we are wanting
 def build():
@@ -711,12 +745,38 @@ m.intro_screen()
 # talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
 # talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
 
-m.reset()
-root = build_single_root()
-build()
-interface()
+loop = True
+while loop is True:
+    m.reset()
+    root = build_single_root()
+    build()
+    interface()
+    temp = int(m.nodecount) - 1
+    temp2 = int(m.nodecount) / 2
+    target = random.randint(temp2, temp)
+    talk("Now, try and apply what you know about breadth first search and depth first search to try and guess which "
+         "search will find cave number " + str(target) + " first. Remember, breadth first search movement preference is"
+                                                         " left, right, parent and depth first search will move left "
+                                                         "to right level by level.")
+    talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
+    randCount = random_search(target)
+    breadthCount = breadth_first_search(target)
+    depthCount = depth_first_search(target)
+    pause()
+    talk("Random search took " + str(randCount) + " steps, breadth first search took " + str(breadthCount) +
+         " steps and depth first search took " + str(depthCount) + " steps.")
+    if randCount <= breadthCount and randCount <= depthCount:
+        talk("It seems randomly searching the tree was faster than our most efficient searches this time. How lucky! "
+             "This can happen, but it's more likely that a set process will work faster.")
+    talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
+         "to finish the program.")
+    for event in pygame.event.get():
+        if event.key == K_RETURN:
+            loop = False
+        elif event.key == K_1:
+            break;
+talk("Probably going to put in outro here at some point.")
 quit()
-
 
 while True:
     m.clock.tick(60)

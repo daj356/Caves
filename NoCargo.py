@@ -64,7 +64,7 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 10
+NUM_OF_NODES = 30
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
@@ -236,15 +236,15 @@ class Node(object):
         if self.type in ["left", "right"]:
             x = self.parent.rect.left
         y = Y_START + Y_STEP * self.depth
-        tempArray.append(x + mod)
+        tempArray.append(x+mod)
         tempArray.append(y)
         if tempArray in arrayOfCoords:
             if self.type == "right":
-                tempArray[0] = tempArray[0] - 30
-                mod = mod - 30
+                tempArray[0] = tempArray[0] - 25
+                mod = mod - 25
             if self.type == "left":
-                tempArray[0] = tempArray[0] + 30
-                mod = mod + 30
+                tempArray[0] = tempArray[0] + 25
+                mod = mod + 25
         arrayOfCoords.append(tempArray)
         # ARRAY COORDS DOES WHAT
         # print(arrayOfCoords)
@@ -252,16 +252,16 @@ class Node(object):
 
     # Prints the nodes onto the game window
     def draw(self):
-        # pic = pygame.image.load(r'resources/pic.png')
-        # pic = pygame.transform.scale(pic, (30, 30))
+        pic = pygame.image.load(r'resources/pic.png')
+        pic = pygame.transform.scale(pic, (30, 30))
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
                                 self.rect.width, self.rect.height)
         if BOX_SIZE[0] >= 10:  # skip text if box is too small
             text = FONT.render(str(self.value), 1, WHITE)
             tr = text.get_rect()
             tr.center = rect.center
-            m.display.blit(text, tr)
-            # m.display.blit(pic, tr)
+            # m.display.blit(text, tr)
+            m.display.blit(pic, tr)
         pygame.draw.rect(m.display, BLUE, rect, 1)
         if self.parent:
             start = (rect.centerx, rect.top)
@@ -309,7 +309,7 @@ def pause():
 def interface():
     global LAST
     inter = True
-    while inter is True and m.nodecount <= 10:
+    while inter is True and m.nodecount <= NUM_OF_NODES:
         build()
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -336,9 +336,11 @@ def interface():
                         if LAST == "left":
                             m.x_shift = WIDTH / 2 - m.selection.rect[0]
                             m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                            set_all_rects()
                         elif LAST == "right":
                             m.x_shift = WIDTH / 2 - m.selection.rect[0]
                             m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                            set_all_rects()
                     else:
                         print("no parent to be selected")
                 elif event.key == K_LEFT:
@@ -346,6 +348,7 @@ def interface():
                         m.selection = m.selection.left
                         m.x_shift = WIDTH / 2 - m.selection.rect[0]
                         m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                        set_all_rects()
                         LAST = "left"
                     else:
                         insert_node_left(m.selection, m.selection.depth)
@@ -355,6 +358,7 @@ def interface():
                         m.selection = m.selection.right
                         m.x_shift = WIDTH / 2 - m.selection.rect[0]
                         m.y_shift = HEIGHT / 2 - m.selection.rect[1]
+                        set_all_rects()
                         LAST = "right"
                     else:
                         insert_node_right(m.selection, m.selection.depth)

@@ -246,12 +246,12 @@ class Node(object):
                 tempArray[0] = tempArray[0] + 25
                 mod = mod + 25
         arrayOfCoords.append(tempArray)
-        # ARRAY COORDS DOES WHAT
-        # print(arrayOfCoords)
         self.rect = pygame.rect.Rect((x + mod, y), BOX_SIZE)
 
     # Prints the nodes onto the game window
     def draw(self):
+        pic_select = pygame.image.load(r'resources/pic_selected.png')
+        pic_select = pygame.transform.scale(pic_select, (30,30))
         pic = pygame.image.load(r'resources/pic.png')
         pic = pygame.transform.scale(pic, (30, 30))
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
@@ -260,9 +260,12 @@ class Node(object):
             text = FONT.render(str(self.value), 1, WHITE)
             tr = text.get_rect()
             tr.center = rect.center
-            m.display.blit(pic, tr)
+            if self.value == m.selection.value:
+                m.display.blit(pic_select, tr)
+            else:
+                m.display.blit(pic, tr)
             m.display.blit(text, tr)
-        pygame.draw.rect(m.display, BLUE, rect, 1)
+        #pygame.draw.rect(m.display, BLUE, rect, 1)
         if self.parent:
             start = (rect.centerx, rect.top)
             end = (self.parent.rect.centerx + m.x_shift, self.parent.rect.bottom + m.y_shift)
@@ -379,7 +382,6 @@ def draw():
         s_rect = pygame.rect.Rect(m.selection.rect.topleft, m.selection.rect.size)
         s_rect.top += m.y_shift
         s_rect.left += m.x_shift
-        pygame.draw.rect(m.display, RED, s_rect, 4)
 
         # Node Info
         text = FONT2.render("Node depth: %d" % m.selection.depth, 1, (200, 255, 255))

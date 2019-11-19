@@ -44,6 +44,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+BROWN = (139, 69, 19)
 
 # Game Fonts
 TITLE_FONT = "INVASION2000.TTF"
@@ -240,20 +241,20 @@ class Node(object):
         tempArray.append(y)
         if tempArray in arrayOfCoords:
             if self.type == "right":
-                tempArray[0] = tempArray[0] - 25
-                mod = mod - 25
+                tempArray[0] = tempArray[0] - BOX_SIZE[0]
+                mod = mod - BOX_SIZE[0]
             if self.type == "left":
-                tempArray[0] = tempArray[0] + 25
-                mod = mod + 25
+                tempArray[0] = tempArray[0] + BOX_SIZE[0]
+                mod = mod + BOX_SIZE[0]
         arrayOfCoords.append(tempArray)
         self.rect = pygame.rect.Rect((x + mod, y), BOX_SIZE)
 
     # Prints the nodes onto the game window
     def draw(self):
         pic_select = pygame.image.load(r'resources/pic_selected.png')
-        pic_select = pygame.transform.scale(pic_select, (30, 30))
+        pic_select = pygame.transform.scale(pic_select, (BOX_SIZE[0] + 5, BOX_SIZE[1] + 5))
         pic = pygame.image.load(r'resources/pic.png')
-        pic = pygame.transform.scale(pic, (30, 30))
+        pic = pygame.transform.scale(pic, (BOX_SIZE[0] + 5, BOX_SIZE[1] + 5))
         rect = pygame.rect.Rect(self.rect.left + m.x_shift, self.rect.top + m.y_shift,
                                 self.rect.width, self.rect.height)
         if BOX_SIZE[0] >= 10:  # skip text if box is too small
@@ -269,7 +270,7 @@ class Node(object):
         if self.parent:
             start = (rect.centerx, rect.top)
             end = (self.parent.rect.centerx + m.x_shift, self.parent.rect.bottom + m.y_shift)
-            pygame.draw.aaline(m.display, GREEN, start, end)  # This is the line that actually draws the box.
+            pygame.draw.aaline(m.display, BROWN, start, end)  # This is the line that actually draws the box.
 
     # Counts the number of children of the current tree being displayed, returns an integer "count"
     def count_children(self):
@@ -694,13 +695,19 @@ def depth_first_search(tar):
 
 # Builds the current version of the tree we are wanting
 def build(control=None):
-    m.display.fill(BLACK)
+    pic_select = pygame.image.load(r'resources/background.jpg')
+    pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
+    #m.display.fill(BLACK)
+    screen.blit(pic_select, [0, 0])
     draw(control)
     pygame.display.flip()
 
 
 def pauseBuild():
-    m.display.fill(BLACK)
+    pic_select = pygame.image.load(r'resources/background.jpg')
+    pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
+    #m.display.fill(BLACK)
+    screen.blit(pic_select, [0, 0])
     pauseHelp()
     pygame.display.flip()
 
@@ -708,70 +715,70 @@ def pauseBuild():
 # initialization
 m = Master()
 m.intro_screen()
-talk("Hello and welcome to Spelunkster 3000")
-
-root = build_single_root()
-build()
-talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
-     "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
-     "of a parent cave is shown on the screen.")
-
-m.reset()
-root = parent_with_two_children()
-build()
-talk("Every parent cave can have one, two, or no children caves (also known as leaves). "
-     "A parent with two children is shown on the screen.")
-
-m.reset()
-root = build_comp_tree()
-build()
-talk("Here is an example of a complete binary tree. "
-     "A binary tree is complete if looking top to bottom, and left to right, there are no empty spaces "
-     "until the end of the cave system. Because there are no missing nodes in between the first cave and "
-     "the last, this tree is considered 'complete'.")
-
-m.reset()
-root = build_full_tree()
-build()
-talk("This is also a complete binary tree.")
-
-m.reset()
-root = build_rand_tree()
-build()
-talk("Question: Does the cave system shown represent a complete binary tree?")
-talk(" ")
-talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
-
-m.reset()
-root = build_degen_tree()
-build()
-talk("This tree is what we call a degenerate tree. A tree is called a degenerate tree "
-     "where there is only 1 child node for each parent node. It is unbalanced and "
-     "is considered the worst case when it comes to sorting through a tree. ")
-
-m.reset()
-root = build_perfect_tree()
-build()
-talk("This tree is called a perfect binary tree. All interior nodes have two children and "
-     "all of the children caves (also known as leaves) have the same depth in the tree. "
-     "The depth of a tree is a fancy way of representing which level a node is at. ")
-
-m.reset()
-root = build_rand_tree()
-build()
-talk("Now we will talk about functions that are used to search each tree. The two functions we will look at are "
-     "depth-first search and breadth-first search. Depth first search will search each node level by level, "
-     "from left to right and breadth first search will search to the left most node first and move right as it moves "
-     "back up the tree.")
-target = 9
-talk("Let's run an example on this tree while looking for node " + str(target) + ".")
-randCount = random_search(target)
-breadthCount = breadth_first_search(target)
-depthCount = depth_first_search(target)
-
-talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
-talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
-talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
+# talk("Hello and welcome to Spelunkster 3000")
+#
+# root = build_single_root()
+# build()
+# talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
+#      "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
+#      "of a parent cave is shown on the screen.")
+#
+# m.reset()
+# root = parent_with_two_children()
+# build()
+# talk("Every parent cave can have one, two, or no children caves (also known as leaves). "
+#      "A parent with two children is shown on the screen.")
+#
+# m.reset()
+# root = build_comp_tree()
+# build()
+# talk("Here is an example of a complete binary tree. "
+#      "A binary tree is complete if looking top to bottom, and left to right, there are no empty spaces "
+#      "until the end of the cave system. Because there are no missing nodes in between the first cave and "
+#      "the last, this tree is considered 'complete'.")
+#
+# m.reset()
+# root = build_full_tree()
+# build()
+# talk("This is also a complete binary tree.")
+#
+# m.reset()
+# root = build_rand_tree()
+# build()
+# talk("Question: Does the cave system shown represent a complete binary tree?")
+# talk(" ")
+# talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
+#
+# m.reset()
+# root = build_degen_tree()
+# build()
+# talk("This tree is what we call a degenerate tree. A tree is called a degenerate tree "
+#      "where there is only 1 child node for each parent node. It is unbalanced and "
+#      "is considered the worst case when it comes to sorting through a tree. ")
+#
+# m.reset()
+# root = build_perfect_tree()
+# build()
+# talk("This tree is called a perfect binary tree. All interior nodes have two children and "
+#      "all of the children caves (also known as leaves) have the same depth in the tree. "
+#      "The depth of a tree is a fancy way of representing which level a node is at. ")
+#
+# m.reset()
+# root = build_rand_tree()
+# build()
+# talk("Now we will talk about functions that are used to search each tree. The two functions we will look at are "
+#      "depth-first search and breadth-first search. Depth first search will search each node level by level, "
+#      "from left to right and breadth first search will search to the left most node first and move right as it moves "
+#      "back up the tree.")
+# target = 9
+# talk("Let's run an example on this tree while looking for node " + str(target) + ".")
+# randCount = random_search(target)
+# breadthCount = breadth_first_search(target)
+# depthCount = depth_first_search(target)
+#
+# talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
+# talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
+# talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
 
 loop = True
 while loop is True:
@@ -809,9 +816,3 @@ while loop is True:
                     inputLoop = False
 talk("Probably going to put in outro here at some point.")
 quit()
-
-while True:
-    m.clock.tick(60)
-    m.display.fill(BLACK)
-    draw()
-    pygame.display.flip()

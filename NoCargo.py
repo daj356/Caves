@@ -5,6 +5,10 @@ import random
 import pyttsx3
 from pygame.locals import *
 
+# https://github.com/jrenner/graphical-binary-trees
+# The author of the original repository was jrenner from the link above.
+# We took and modified his repository so that we could present the idea of Binary Trees
+
 # Initializes the text-to-speech function
 engine = pyttsx3.init()
 engine.setProperty('rate', 130)  # Speed percent
@@ -132,13 +136,6 @@ class Master(object):
                             pygame.quit()
                             quit()
 
-                            '''
-                        if selected == "info":
-                            intro_screen = False
-                            m.info_screen()
-                            '''
-            # index %= len(menu_selection_list)
-
             # Main Menu UI
             screen.fill(BLACK)
             title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
@@ -163,35 +160,6 @@ class Master(object):
             pygame.display.update()
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
-
-    '''
-    def info_screen(self):
-        info_screen = True
-        selected = start
-
-        # if event.key == pygame.K_RETURN:
-        # if selected == "start":
-        #     info_screen = False
-
-        # Main Menu UI
-        screen.fill(BLACK)
-        title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
-        if selected == "start":
-            text_start = self.text_format("START", OPTIONS_FONT, 85, YELLOW)
-
-        title_rect = title.get_rect()
-        start_rect = text_start.get_rect()
-
-        # Main Menu Text
-        screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
-        screen.blit(text_start, (WIDTH / 2 - (start_rect[2] / 2), 250))
-        # screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 320))
-        # screen.blit(text_info, (WIDTH / 2 - (info_rect[2] / 2), 390))
-        pygame.display.update()
-        self.clock.tick(60)
-        pygame.display.set_caption("Info")
-        '''
-
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
 # and right and the depth.
@@ -315,7 +283,7 @@ def interface():
     global LAST
     inter = True
     while inter is True and m.nodecount <= NUM_OF_NODES:
-        build()
+        build(True)
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
@@ -354,6 +322,8 @@ def interface():
                         set_all_rects()
                         LAST = "left"
                     else:
+                        m.x_shift = WIDTH / 2 - m.selection.rect[0]
+                        m.y_shift = HEIGHT / 2 - m.selection.rect[1]
                         insert_node_left(m.selection, m.selection.depth)
                         set_all_rects()
                 elif event.key == K_RIGHT:
@@ -364,6 +334,8 @@ def interface():
                         set_all_rects()
                         LAST = "right"
                     else:
+                        m.x_shift = WIDTH / 2 - m.selection.rect[0]
+                        m.y_shift = HEIGHT / 2 - m.selection.rect[1]
                         insert_node_right(m.selection, m.selection.depth)
                         set_all_rects()
                 elif event.key == K_RETURN:
@@ -393,12 +365,15 @@ def draw(control):
         help = FONT.render("UP - go to parent, LEFT/RIGHT - travel down tree", 1, (255, 180, 180))
         help2 = FONT.render("W - Move screen up, A - Move screen left, S - Move screen down, D - Move screen right", 1,
                             WHITE)
+        help3 = FONT.render("R - Reset Tree", 1, WHITE)
         hrect = help.get_rect()
         hrect.centerx = trect.centerx
         hrect.top = trect.top - trect.height
         m.display.blit(help, hrect)
         hrect.top -= hrect.height
         m.display.blit(help2, hrect)
+        hrect.top -= hrect.height
+        m.display.blit(help3, hrect)
 
 
 def pauseHelp():
@@ -434,9 +409,6 @@ def build_tree():
     m.nodelist = []
     root = create_root_node()
     set_all_rects()
-
-    walk_tree(root)
-
     m.selection = root
     return root
 
@@ -697,7 +669,6 @@ def depth_first_search(tar):
 def build(control=None):
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
-    #m.display.fill(BLACK)
     screen.blit(pic_select, [0, 0])
     draw(control)
     pygame.display.flip()
@@ -706,7 +677,6 @@ def build(control=None):
 def pauseBuild():
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
-    #m.display.fill(BLACK)
     screen.blit(pic_select, [0, 0])
     pauseHelp()
     pygame.display.flip()
@@ -737,15 +707,13 @@ m.intro_screen()
 #      "until the end of the cave system. Because there are no missing nodes in between the first cave and "
 #      "the last, this tree is considered 'complete'.")
 #
-# m.reset()
-# root = build_full_tree()
-# build()
-# talk("This is also a complete binary tree.")
+# m.reset() root = build_full_tree() build() talk("This is an example of a full binary tree. A full binary tree is a
+# tree where every node has either zero or two children. The nodes without children are known as 'leaves'.")
 #
 # m.reset()
 # root = build_rand_tree()
 # build()
-# talk("Question: Does the cave system shown represent a complete binary tree?")
+# talk("Question: Does the cave system shown represent a full binary tree?")
 # talk(" ")
 # talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
 #

@@ -161,6 +161,7 @@ class Master(object):
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
 
+
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
 # and right and the depth.
 class Node(object):
@@ -342,6 +343,7 @@ def interface():
                     inter = False
                 else:
                     print("invalid keyboard input: '%s' (%d)" % (pygame.key.name(event.key), event.key))
+    build(True)
 
 
 # Draws the current screen, with the current tree and information on how to traverse the caves
@@ -390,10 +392,13 @@ def pauseHelp():
         trect.bottom = m.display.get_rect().bottom - 10
         help = FONT.render("W - Move screen up, A - Move screen left, S - Move screen down, D - Move screen right", 1,
                            WHITE)
+        help2 = FONT.render("ENTER - Continue Program", 1, WHITE)
         hrect = help.get_rect()
         hrect.centerx = trect.centerx
         hrect.top = trect.top - trect.height
         m.display.blit(help, hrect)
+        hrect.top -= hrect.height
+        m.display.blit(help2, hrect)
 
 
 # Creates a single, starting parent node
@@ -593,14 +598,6 @@ def insert_node_left(node, depth):
     add_new_node(node.left, depth + 1)
 
 
-# Recursive function allowing for traversal of a tree
-def walk_tree(leaf):
-    if leaf.left:
-        walk_tree(leaf.left)
-    if leaf.right:
-        walk_tree(leaf.right)
-
-
 # Sets the position of all nodes at all depths
 def set_all_rects():
     arrayOfCoords = []
@@ -665,7 +662,8 @@ def depth_first_search(tar):
             tempArray.append(curNode.left)
 
 
-# Builds the current version of the tree we are wanting
+# Builds the current version of the tree we are wanting. The parameter control will determine whether or not to write
+# instructions at the bottom of the screen. It will be true whenever the user has the ability to build their own tree
 def build(control=None):
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
@@ -673,7 +671,7 @@ def build(control=None):
     draw(control)
     pygame.display.flip()
 
-
+# Similar to build(), but places a different set of instructions at the bottom of the screen.
 def pauseBuild():
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
@@ -685,69 +683,75 @@ def pauseBuild():
 # initialization
 m = Master()
 m.intro_screen()
-# talk("Hello and welcome to Spelunkster 3000")
-#
-# root = build_single_root()
-# build()
-# talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
-#      "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
-#      "of a parent cave is shown on the screen.")
-#
-# m.reset()
-# root = parent_with_two_children()
-# build()
-# talk("Every parent cave can have one, two, or no children caves (also known as leaves). "
-#      "A parent with two children is shown on the screen.")
-#
-# m.reset()
-# root = build_comp_tree()
-# build()
-# talk("Here is an example of a complete binary tree. "
-#      "A binary tree is complete if looking top to bottom, and left to right, there are no empty spaces "
-#      "until the end of the cave system. Because there are no missing nodes in between the first cave and "
-#      "the last, this tree is considered 'complete'.")
-#
-# m.reset() root = build_full_tree() build() talk("This is an example of a full binary tree. A full binary tree is a
-# tree where every node has either zero or two children. The nodes without children are known as 'leaves'.")
-#
-# m.reset()
-# root = build_rand_tree()
-# build()
-# talk("Question: Does the cave system shown represent a full binary tree?")
-# talk(" ")
-# talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
-#
-# m.reset()
-# root = build_degen_tree()
-# build()
-# talk("This tree is what we call a degenerate tree. A tree is called a degenerate tree "
-#      "where there is only 1 child node for each parent node. It is unbalanced and "
-#      "is considered the worst case when it comes to sorting through a tree. ")
-#
-# m.reset()
-# root = build_perfect_tree()
-# build()
-# talk("This tree is called a perfect binary tree. All interior nodes have two children and "
-#      "all of the children caves (also known as leaves) have the same depth in the tree. "
-#      "The depth of a tree is a fancy way of representing which level a node is at. ")
-#
-# m.reset()
-# root = build_rand_tree()
-# build()
-# talk("Now we will talk about functions that are used to search each tree. The two functions we will look at are "
-#      "depth-first search and breadth-first search. Depth first search will search each node level by level, "
-#      "from left to right and breadth first search will search to the left most node first and move right as it moves "
-#      "back up the tree.")
-# target = 9
-# talk("Let's run an example on this tree while looking for node " + str(target) + ".")
-# randCount = random_search(target)
-# breadthCount = breadth_first_search(target)
-# depthCount = depth_first_search(target)
-#
-# talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
-# talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
-# talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
+talk("Hello and welcome to Spelunkster 3000")
 
+root = build_single_root()
+build()
+talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
+     "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
+     "of a parent cave is shown on the screen.")
+
+m.reset()
+root = parent_with_two_children()
+build()
+talk("Every parent cave can have one, two, or no children caves. A parent with two children is shown on the screen.")
+
+m.reset()
+root = build_comp_tree()
+build()
+talk("Here is an example of a complete binary tree. "
+     "A binary tree is complete if looking top to bottom, and left to right, there are no empty spaces "
+     "until the end of the cave system. Because there are no missing nodes in between the first cave and "
+     "the last, this tree is considered 'complete'.")
+
+m.reset()
+root = build_full_tree()
+build()
+talk("This is an example of a full binary tree. A full binary tree is a"
+     "tree where every node has either zero or two children. The nodes without children are known as 'leaves'.")
+
+m.reset()
+root = build_rand_tree()
+build()
+talk("Question: Does the cave system shown represent a full binary tree? Look around the tree with the keys W, A, S, "
+     "and D to guess and hit enter when you are ready to answer.")
+pause()
+talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
+
+m.reset()
+root = build_degen_tree()
+build()
+talk("This tree is what we call a degenerate tree. A tree is called a degenerate tree "
+     "where there is only 1 child node for each parent node. It is unbalanced and "
+     "is considered the worst case when it comes to sorting through a tree. ")
+
+m.reset()
+root = build_perfect_tree()
+build()
+talk("This tree is called a perfect binary tree. All interior nodes have two children and "
+     "all of the children caves (also known as leaves) have the same depth in the tree. "
+     "The depth of a tree is a fancy way of representing which level a node is at. ")
+
+m.reset()
+root = build_rand_tree()
+build()
+talk("Now we will talk about functions that are used to search each tree. The two functions we will look at are "
+     "depth-first search and breadth-first search. Depth first search will search each node level by level, "
+     "from left to right and breadth first search will search to the left most node first and move right as it moves "
+     "back up the tree.")
+target = 9
+talk("Let's run an example on this tree while looking for node " + str(target) + ".")
+randCount = random_search(target)
+breadthCount = breadth_first_search(target)
+depthCount = depth_first_search(target)
+
+talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
+talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
+talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
+
+talk("Now, try making your own cave system using the left and right arrow keys to change selected caves and the up "
+     "arrow key to return up. Hit enter when you are done building the cave or continue making caves until you dig "
+     + str(MAX_NUM) + " number of caves.")
 loop = True
 while loop is True:
     m.reset()

@@ -17,6 +17,9 @@ voices = engine.getProperty('voices')
 # Sets a female voice
 engine.setProperty('voice', voices[1].id)
 
+
+
+
 # Initializes pygame
 pygame.init()
 
@@ -69,20 +72,18 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 30
-MAX_NUM = 100
+NUM_OF_NODES = 20
 KEYBOARD_PAN_STEP = 50
-
-
-# Talk will run text to speech on the string that is passed as an argument.
-def talk(say):
-    engine.say(say)
-    engine.runAndWait()
 
 
 # A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
 # they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
+def talk(say):
+    engine.say(say)
+    engine.runAndWait()
+
+
 class Master(object):
     def __init__(self):
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
@@ -114,6 +115,7 @@ class Master(object):
     # Main Menu
     def intro_screen(self):
         index = 0
+        # add "info" back to the list below
         menu_selection_list = ["start", "quit"]
         intro_screen = True
         selected = menu_selection_list[index]
@@ -260,8 +262,6 @@ def quit():
     sys.exit()
 
 
-# Controls user input. Interface() works similarly, but pause allows to user only to move the screen display and hit
-# enter to continue the program.
 def pause():
     pause = True
     while pause is True:
@@ -282,8 +282,6 @@ def pause():
                     print("Invalid key.")
 
 
-# Same function as pause(), but allows extra functionality of using arrow keys to move through the tree and add nodes
-# and R to reset the tree.
 def interface():
     global LAST
     inter = True
@@ -382,7 +380,6 @@ def draw(control):
         m.display.blit(help3, hrect)
 
 
-# Draws nodes and add instructions for the 'pause' screen.
 def pauseHelp():
     for depth_level in m.nodelist:
         for node in depth_level:
@@ -696,6 +693,33 @@ def checkFull():
     return True
 
 
+def endInstruct():
+    pic_select = pygame.image.load(r'resources/background.jpg')
+    pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
+    screen.blit(pic_select, [0, 0])
+    for depth_level in m.nodelist:
+        for node in depth_level:
+            node.draw()
+    if m.selection:
+        s_rect = pygame.rect.Rect(m.selection.rect.topleft, m.selection.rect.size)
+        s_rect.top += m.y_shift
+        s_rect.left += m.x_shift
+        text = FONT2.render("Node depth: %d" % m.selection.depth, 1, (200, 255, 255))
+        trect = text.get_rect()
+        trect.center = m.display.get_rect().center
+        trect.bottom = m.display.get_rect().bottom - 10
+        help = FONT.render("1 - Redo Tree Building", 1,
+                           WHITE)
+        help2 = FONT.render("ENTER - Continue Program", 1, WHITE)
+        hrect = help.get_rect()
+        hrect.centerx = trect.centerx
+        hrect.top = trect.top - trect.height
+        m.display.blit(help, hrect)
+        hrect.top -= hrect.height
+        m.display.blit(help2, hrect)
+    pygame.display.flip()
+
+
 # initialization
 m = Master()
 m.intro_screen()
@@ -786,7 +810,9 @@ talk("The next function, the breadth-first-search, has an order preference of 'l
      "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
      "then restart its process of 'left-root-right', attempting to move left if possible. Like other search methods, "
      "it will not search the same node twice.")
-target = random.randint(int(MAX_NUM / 2), MAX_NUM - 1)
+temp = int(m.nodecount) - 1
+temp2 = int(m.nodecount / 2)
+target = random.randint(temp2, temp)
 talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
      "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
      "move the screen and press enter when you want to check your answer.")
@@ -803,8 +829,10 @@ talk("Now let's have some fun creating binary trees of our own. Try making your 
      "Can you make a full binary tree? A perfect tree? What about a degenerate tree? Only one way to find out. Press "
      "the left and right arrow keys to create a cave, or use the up and down arrow keys to dig through your caves. "
      "Press the enter key when you are done building the cave, or continue digging caves until you've dug "
-     + str(MAX_NUM) + " caves!")
+     + str(NUM_OF_NODES) + " caves!")
 loop = True
+#
+#
 while loop is True:
     m.reset()
     root = build_single_root()
@@ -828,8 +856,9 @@ while loop is True:
     if randCount <= breadthCount and randCount <= depthCount:
         talk("Would you look at that! Seems like searching the binary tree at random was faster than our best "
              "function. This can happen, but it's more likely that a set process will work faster.")
-    talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter"
-         " to finish the program.")
+    talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
+         "to finish the program.")
+    endInstruct()
     inputLoop = True
     while inputLoop is True:
         for event in pygame.event.get():

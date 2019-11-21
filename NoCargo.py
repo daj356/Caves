@@ -671,6 +671,7 @@ def build(control=None):
     draw(control)
     pygame.display.flip()
 
+
 # Similar to build(), but places a different set of instructions at the bottom of the screen.
 def pauseBuild():
     pic_select = pygame.image.load(r'resources/background.jpg')
@@ -680,10 +681,20 @@ def pauseBuild():
     pygame.display.flip()
 
 
+# Checks to see if the tree is a full tree. Returns false if any node has only 1 child. Returns true if all nodes
+# have zero or two children.
+def checkFull():
+    for depth_level in m.nodelist:
+        for node in depth_level:
+            if (node.left and node.right is None) or (node.right and node.left is None):
+                return False
+    return True
+
+
 # initialization
 m = Master()
 m.intro_screen()
-talk("Hello and welcome to Spelunkster 3000")
+talk("Hello and welcome to Spelunkster 3000.")
 
 root = build_single_root()
 build()
@@ -730,12 +741,16 @@ root = build_rand_tree()
 build()
 talk("Let's see what we've learned. Look at the binary tree here, represented as a system of caves, with tunnels "
      "dug from one cave to another. Does the system of caves shown here represent a full binary tree? If you'd like "
-     "to move the screen, to get a better look, press W to go up, S to move down, and A to move left. If you think "
-     "you know the tree is or is not a full binary tree, press D to guess, then hit enter. Remember, a fill binary "
+     "to move the screen, to get a better look, press W to go up, S to move down, A to move left and D to move right. "
+     "If you think you know the tree is or is not a full binary tree hit enter to continue. Remember, a full binary "
      "tree is a binary tree where every parent node has either two children, or no children at all ")
 pause()
-talk("Drum roll please, bahdahbahdahbahdah clash. The answer is. no. This tree is not a full binary tree. It isn't "
-     "a full binary tree because not all of the parent nodes have two child nodes.")
+answer = checkFull()
+if not answer:
+    talk("Drum roll please, bahdahbahdahbahdah clash. The answer is. no. This tree is not a full binary tree. It isn't "
+         "a full binary tree because not all of the parent nodes have two child nodes.")
+else:
+    talk("Drum roll please, bahdahbahdahbahdah clash. The answer is yes, because all nodes have 2 or zero children.")
 
 m.reset()
 root = build_degen_tree()
@@ -750,7 +765,7 @@ build()
 talk("Our next tree is known as a perfect binary tree. Why is it perfect? Well, as you can see, all the parent nodes "
      "have two children, except the ones at the very bottom. Remember what these nodes at the bottom are called? The "
      "nodes that don't have any branches, or caves that don't have any tunnels, coming out of them?")
-talk("If you said 'leaves', you're right! And if you didn't now you know. ")
+talk("If you said 'leaves', you're right! And if you didn't, now you know. ")
 
 m.reset()
 root = build_rand_tree()
@@ -764,14 +779,17 @@ talk("Let's talk about the depth first search function first. This function will
      "node in that tree, level by level, starting at the top, and moving down, one level at a time. At each level, "
      "the search will move from left to right along the tree, then continue down another level, and so on, looking "
      "for whatever you want the tree to find.")
-
-# CAN SOMEONE PLEASE EXPLAIN TO ME THE BREADTH FIRST SEARCH EVEN THOUGH IVE PASSED AT LEAST THREE TESTS ABOUT THE
-# ALGORITHM
-
-talk("The next function, the breadth-first-search")
-target = 9
-talk("Now that we know how to search a binary tree, let's interact with one. See if you can search for a node in "
-     "the tree on your screen " + str(target) + ".")
+talk("The next function, the breadth-first-search, has an order preference of 'left-root-right'. This can be "
+     "confusing, so listen up. The first thing this search algorithm will do is it will move to a left node if it's "
+     "possible. If it is no longer possible to move left, it will search the node it is at. The algorithm will then "
+     "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
+     "then restart its process of 'left-root-right', attempting to move left if possible. Like other search methods, "
+     "it will not search the same node twice.")
+target = random.randint(int(MAX_NUM/2), MAX_NUM-1)
+talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
+     "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
+     "move the screen and press enter when you want to check your answer.")
+pause()
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
 depthCount = depth_first_search(target)
@@ -799,9 +817,6 @@ while loop is True:
          "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
          " then right, while a depth first search function likes to move left to right, from one level to the "
          "next level.")
-
-    # NOT QUITE SURE HOW TO CONTINUE FROM HERE
-
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)
     breadthCount = breadth_first_search(target)
@@ -811,11 +826,7 @@ while loop is True:
          " steps and depth first search took " + str(depthCount) + " steps.")
     if randCount <= breadthCount and randCount <= depthCount:
         talk("Would you look at that! Seems like searching the binary tree at random was faster than our best "
-             "function. Why do you think that is? "
-             
-             #CONFUSED ABOUT THE NEXT TWO LINES
-             
-             "This can happen, but it's more likely that a set process will work faster.")
+             "function. This can happen, but it's more likely that a set process will work faster.")
     talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
          "to finish the program.")
     inputLoop = True

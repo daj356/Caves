@@ -74,14 +74,15 @@ MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
 
-# A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
-# they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
-# the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
+# Talk will run text to speech on the string that is passed as an argument.
 def talk(say):
     engine.say(say)
     engine.runAndWait()
 
 
+# A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
+# they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
+# the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
 class Master(object):
     def __init__(self):
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
@@ -113,7 +114,6 @@ class Master(object):
     # Main Menu
     def intro_screen(self):
         index = 0
-        # add "info" back to the list below
         menu_selection_list = ["start", "quit"]
         intro_screen = True
         selected = menu_selection_list[index]
@@ -260,6 +260,8 @@ def quit():
     sys.exit()
 
 
+# Controls user input. Interface() works similarly, but pause allows to user only to move the screen display and hit
+# enter to continue the program.
 def pause():
     pause = True
     while pause is True:
@@ -280,6 +282,8 @@ def pause():
                     print("Invalid key.")
 
 
+# Same function as pause(), but allows extra functionality of using arrow keys to move through the tree and add nodes
+# and R to reset the tree.
 def interface():
     global LAST
     inter = True
@@ -378,6 +382,7 @@ def draw(control):
         m.display.blit(help3, hrect)
 
 
+# Draws nodes and add instructions for the 'pause' screen.
 def pauseHelp():
     for depth_level in m.nodelist:
         for node in depth_level:
@@ -706,10 +711,6 @@ talk("Binary trees are most commonly used in computer science, which is the scie
      "create a system that links everything together. At the very top of a binary tree is one root node, or "
      "cave, like this ")
 
-# talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
-#      "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
-#      "of a parent cave is shown on the screen.")
-
 m.reset()
 root = parent_with_two_children()
 build()
@@ -785,7 +786,7 @@ talk("The next function, the breadth-first-search, has an order preference of 'l
      "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
      "then restart its process of 'left-root-right', attempting to move left if possible. Like other search methods, "
      "it will not search the same node twice.")
-target = random.randint(int(MAX_NUM/2), MAX_NUM-1)
+target = random.randint(int(MAX_NUM / 2), MAX_NUM - 1)
 talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
      "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
      "move the screen and press enter when you want to check your answer.")
@@ -827,8 +828,8 @@ while loop is True:
     if randCount <= breadthCount and randCount <= depthCount:
         talk("Would you look at that! Seems like searching the binary tree at random was faster than our best "
              "function. This can happen, but it's more likely that a set process will work faster.")
-    talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
-         "to finish the program.")
+    talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter"
+         " to finish the program.")
     inputLoop = True
     while inputLoop is True:
         for event in pygame.event.get():

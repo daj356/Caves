@@ -17,6 +17,9 @@ voices = engine.getProperty('voices')
 # Sets a female voice
 engine.setProperty('voice', voices[1].id)
 
+
+
+
 # Initializes pygame
 pygame.init()
 
@@ -69,8 +72,7 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 30
-MAX_NUM = 100
+NUM_OF_NODES = 20
 KEYBOARD_PAN_STEP = 50
 
 
@@ -691,6 +693,33 @@ def checkFull():
     return True
 
 
+def endInstruct():
+    pic_select = pygame.image.load(r'resources/background.jpg')
+    pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
+    screen.blit(pic_select, [0, 0])
+    for depth_level in m.nodelist:
+        for node in depth_level:
+            node.draw()
+    if m.selection:
+        s_rect = pygame.rect.Rect(m.selection.rect.topleft, m.selection.rect.size)
+        s_rect.top += m.y_shift
+        s_rect.left += m.x_shift
+        text = FONT2.render("Node depth: %d" % m.selection.depth, 1, (200, 255, 255))
+        trect = text.get_rect()
+        trect.center = m.display.get_rect().center
+        trect.bottom = m.display.get_rect().bottom - 10
+        help = FONT.render("1 - Redo Tree Building", 1,
+                           WHITE)
+        help2 = FONT.render("ENTER - Continue Program", 1, WHITE)
+        hrect = help.get_rect()
+        hrect.centerx = trect.centerx
+        hrect.top = trect.top - trect.height
+        m.display.blit(help, hrect)
+        hrect.top -= hrect.height
+        m.display.blit(help2, hrect)
+    pygame.display.flip()
+
+
 # initialization
 m = Master()
 m.intro_screen()
@@ -705,10 +734,6 @@ talk("Binary trees are most commonly used in computer science, which is the scie
      "caves. Each cave is connected by a tunnel, a tunnel dug out of one cave and into another. These tunnels "
      "create a system that links everything together. At the very top of a binary tree is one root node, or "
      "cave, like this ")
-
-# talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
-#      "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
-#      "of a parent cave is shown on the screen.")
 
 m.reset()
 root = parent_with_two_children()
@@ -785,7 +810,9 @@ talk("The next function, the breadth-first-search, has an order preference of 'l
      "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
      "then restart its process of 'left-root-right', attempting to move left if possible. Like other search methods, "
      "it will not search the same node twice.")
-target = random.randint(int(MAX_NUM/2), MAX_NUM-1)
+temp = int(m.nodecount) - 1
+temp2 = int(m.nodecount / 2)
+target = random.randint(temp2, temp)
 talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
      "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
      "move the screen and press enter when you want to check your answer.")
@@ -802,8 +829,10 @@ talk("Now let's have some fun creating binary trees of our own. Try making your 
      "Can you make a full binary tree? A perfect tree? What about a degenerate tree? Only one way to find out. Press "
      "the left and right arrow keys to create a cave, or use the up and down arrow keys to dig through your caves. "
      "Press the enter key when you are done building the cave, or continue digging caves until you've dug "
-     + str(MAX_NUM) + " caves!")
+     + str(NUM_OF_NODES) + " caves!")
 loop = True
+#
+#
 while loop is True:
     m.reset()
     root = build_single_root()
@@ -829,6 +858,7 @@ while loop is True:
              "function. This can happen, but it's more likely that a set process will work faster.")
     talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
          "to finish the program.")
+    endInstruct()
     inputLoop = True
     while inputLoop is True:
         for event in pygame.event.get():

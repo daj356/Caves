@@ -687,60 +687,91 @@ talk("Hello and welcome to Spelunkster 3000")
 
 root = build_single_root()
 build()
-talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
-     "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
-     "of a parent cave is shown on the screen.")
+talk("Today, we're going to explore binary trees, and hopefully learn a thing or two along the way. Let's go! ")
+talk("Binary trees are most commonly used in computer science, which is the science behind your phone, your "
+     "computer, your video games, and a lot of other electronic devices we use today. In computer science, you "
+     "can think of a binary tree as a system of circles, or nodes, or as we think of it here, as a system of "
+     "caves. Each cave is connected by a tunnel, a tunnel dug out of one cave and into another. These tunnels "
+     "create a system that links everything together. At the very top of a binary tree is one root node, or "
+     "cave, like this ")
+
+# talk("In this program, we will explain a little bit about binary trees, which is useful knowledge for computer "
+#      "science. A binary tree can be visualized like a system of caves, with parent and children caves. An example "
+#      "of a parent cave is shown on the screen.")
 
 m.reset()
 root = parent_with_two_children()
 build()
-talk("Every parent cave can have one, two, or no children caves. A parent with two children is shown on the screen.")
+talk("This cave, at the top, is called a parent node, and like a lot of parents, it can have children. "
+     "Every parent node in a binary tree can have either one, two, or no children at all. Here's what a parent "
+     "node with two children looks like ")
 
 m.reset()
 root = build_comp_tree()
 build()
-talk("Here is an example of a complete binary tree. "
-     "A binary tree is complete if looking top to bottom, and left to right, there are no empty spaces "
-     "until the end of the cave system. Because there are no missing nodes in between the first cave and "
-     "the last, this tree is considered 'complete'.")
+talk("Ok, now that we know what a binary tree is, we can take a look at all the different types of binary trees "
+     "there are. What you see now is one example. This binary tree is called a complete binary tree. What makes "
+     "a binary tree complete? Well, a binary tree is complete if you can look at it top to bottom, and left to "
+     "right, and find no empty spaces between all the way through. See if you can tell whether this binary tree is "
+     "complete or not.")
+talk("Since all of the circles, or nodes are filled between the first cave and the last cave, this tree can be "
+     "rightly called 'complete'.")
 
 m.reset()
 root = build_full_tree()
 build()
-talk("This is an example of a full binary tree. A full binary tree is a"
-     "tree where every node has either zero or two children. The nodes without children are known as 'leaves'.")
+talk("Moving along to our next example. What you see now is a type of a binary tree called a full binary tree. "
+     "A full binary tree is a tree where every parent node has either two children, or no children at all. "
+     "The parent nodes that don't have any children, those nodes are called 'leaves', and, just like real tree "
+     "leaves don't have branches growing out of them, binary leaf nodes have no links, or tunnels.")
 
 m.reset()
 root = build_rand_tree()
 build()
-talk("Question: Does the cave system shown represent a full binary tree? Look around the tree with the keys W, A, S, "
-     "and D to guess and hit enter when you are ready to answer.")
+talk("Let's see what we've learned. Look at the binary tree here, represented as a system of caves, with tunnels "
+     "dug from one cave to another. Does the system of caves shown here represent a full binary tree? If you'd like "
+     "to move the screen, to get a better look, press W to go up, S to move down, and A to move left. If you think "
+     "you know the tree is or is not a full binary tree, press D to guess, then hit enter. Remember, a fill binary "
+     "tree is a binary tree where every parent node has either two children, or no children at all ")
 pause()
-talk("The answer is no, because not all of the parent nodes have 2 children nodes.")
+talk("Drum roll please, bahdahbahdahbahdah clash. The answer is. no. This tree is not a full binary tree. It isn't "
+     "a full binary tree because not all of the parent nodes have two child nodes.")
 
 m.reset()
 root = build_degen_tree()
 build()
-talk("This tree is what we call a degenerate tree. A tree is called a degenerate tree "
-     "where there is only 1 child node for each parent node. It is unbalanced and "
-     "is considered the worst case when it comes to sorting through a tree. ")
+talk("Here we have what you call a degenerate tree. A binary tree is called degenerate when each parent node has "
+     "only one child. When you try and search a tree, which is something we'll get into soon, this tree, the "
+     "degenerate tree, is the worst to sort. Can you think of any reasons why it's so tough to sort this tree?")
 
 m.reset()
 root = build_perfect_tree()
 build()
-talk("This tree is called a perfect binary tree. All interior nodes have two children and "
-     "all of the children caves (also known as leaves) have the same depth in the tree. "
-     "The depth of a tree is a fancy way of representing which level a node is at. ")
+talk("Our next tree is known as a perfect binary tree. Why is it perfect? Well, as you can see, all the parent nodes "
+     "have two children, except the ones at the very bottom. Remember what these nodes at the bottom are called? The "
+     "nodes that don't have any branches, or caves that don't have any tunnels, coming out of them?")
+talk("If you said 'leaves', you're right! And if you didn't now you know. ")
 
 m.reset()
 root = build_rand_tree()
 build()
-talk("Now we will talk about functions that are used to search each tree. The two functions we will look at are "
-     "depth-first search and breadth-first search. Depth first search will search each node level by level, "
-     "from left to right and breadth first search will search to the left most node first and move right as it moves "
-     "back up the tree.")
+talk("Remember when we talked about 'searching' a binary tree, just a few moments ago? Well, now we're going to "
+     "learn what searching a binary tree means. Let's go!")
+talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
+     "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
+     "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
+talk("Let's talk about the depth first search function first. This function will take in a tree, then search each "
+     "node in that tree, level by level, starting at the top, and moving down, one level at a time. At each level, "
+     "the search will move from left to right along the tree, then continue down another level, and so on, looking "
+     "for whatever you want the tree to find.")
+
+# CAN SOMEONE PLEASE EXPLAIN TO ME THE BREADTH FIRST SEARCH EVEN THOUGH IVE PASSED AT LEAST THREE TESTS ABOUT THE
+# ALGORITHM
+
+talk("The next function, the breadth-first-search")
 target = 9
-talk("Let's run an example on this tree while looking for node " + str(target) + ".")
+talk("Now that we know how to search a binary tree, let's interact with one. See if you can search for a node in "
+     "the tree on your screen " + str(target) + ".")
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
 depthCount = depth_first_search(target)
@@ -749,9 +780,11 @@ talk("A random search of the tree took " + str(randCount) + "searches to find th
 talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
 talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
 
-talk("Now, try making your own cave system using the left and right arrow keys to change selected caves and the up "
-     "arrow key to return up. Hit enter when you are done building the cave or continue making caves until you dig "
-     + str(MAX_NUM) + " number of caves.")
+talk("Now let's have some fun creating binary trees of our own. Try making your own binary tree using our cave system. "
+     "Can you make a full binary tree? A perfect tree? What about a degenerate tree? Only one way to find out. Press "
+     "the left and right arrow keys to create a cave, or use the up and down arrow keys to dig through your caves. "
+     "Press the enter key when you are done building the cave, or continue digging caves until you've dug "
+     + str(MAX_NUM) + " caves!")
 loop = True
 while loop is True:
     m.reset()
@@ -761,10 +794,14 @@ while loop is True:
     temp = int(m.nodecount) - 1
     temp2 = int(m.nodecount / 2)
     target = random.randint(temp2, temp)
-    talk("Now, try and apply what you know about breadth first search and depth first search to try and guess which "
-         "search will find cave number " + str(target) + " first. Remember, breadth first search movement preference is"
-                                                         " left, right, parent and depth first search will move left "
-                                                         "to right level by level.")
+    talk("Now, with your binary tree cave system built, try and apply what you know about breadth first search "
+         "and depth first search functions to guess which search will find cave number " + str(target) + " the "
+         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
+         " then right, while a depth first search function likes to move left to right, from one level to the "
+         "next level.")
+
+    # NOT QUITE SURE HOW TO CONTINUE FROM HERE
+
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)
     breadthCount = breadth_first_search(target)
@@ -773,7 +810,11 @@ while loop is True:
     talk("Random search took " + str(randCount) + " steps, breadth first search took " + str(breadthCount) +
          " steps and depth first search took " + str(depthCount) + " steps.")
     if randCount <= breadthCount and randCount <= depthCount:
-        talk("It seems randomly searching the tree was faster than our most efficient searches this time. How lucky! "
+        talk("Would you look at that! Seems like searching the binary tree at random was faster than our best "
+             "function. Why do you think that is? "
+             
+             #CONFUSED ABOUT THE NEXT TWO LINES
+             
              "This can happen, but it's more likely that a set process will work faster.")
     talk("Was your answer correct? If you would like to build another tree, please press 1 to go again, or press enter "
          "to finish the program.")
@@ -786,5 +827,12 @@ while loop is True:
                     inputLoop = False
                 elif event.key == K_1:
                     inputLoop = False
-talk("Probably going to put in outro here at some point.")
+talk("Binary trees are pretty cool. What's cooler, you can find tree-like systems everywhere, not just in computer "
+     "science. Ever heard of Charles Darwin? Darwin's theory of evolution started with a tree. A lot like a binary "
+     "tree. Not just Darwin, though. The english language is explained using tree-like systems too. Grammar, for "
+     "instance, is explained by displaying sentences and the rules of producing them using a tree. Music, too. The "
+     "different lengths of a musical note are explained clearly by a binary search tree, a perfect binary search tree, "
+     "to be exact. Even your family tree, with all your ancestors, is, in one way or another, a system of nodes and "
+     "links. So binary trees are important structures that help explain a lot of different things about life and how "
+     "to make sense of the world, and they can be used to dig pretty cool caves, too.")
 quit()

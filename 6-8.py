@@ -642,9 +642,6 @@ def depth_first_search(root, tar, step=0, stepCount=0):
         if root.left:
             step = step + 1
             stepCount = depth_first_search(root.left, tar, step, stepCount)
-        m.selection = root
-        build()
-        pygame.time.wait(2000)
         if root.right:
             step = step + 1
             stepCount = depth_first_search(root.right, tar, step, stepCount)
@@ -659,12 +656,12 @@ def breadth_first_search(tar):
     tempArray = [m.selection]
     while len(tempArray) > 0:
         curNode = tempArray.pop(0)
+        m.selection = curNode
         if curNode.value == tar:
             return stepCount
-        stepCount = stepCount + 1
         if curNode.left:
             tempArray.append(curNode.left)
-        if curNode.left:
+        if curNode.right:
             tempArray.append(curNode.right)
 
 
@@ -727,99 +724,99 @@ def endInstruct():
 # initialization
 m = Master()
 m.intro_screen()
-talk("Hello and welcome to Spelunkster 3000.")
-
-root = build_single_root()
-build()
-talk("Today, we're going to explore binary trees, and hopefully learn a thing or two along the way. Let's go! ")
-talk("Binary trees are most commonly used in computer science, which is the science behind your phone, your "
-     "computer, your video games, and a lot of other electronic devices we use today. In computer science, you "
-     "can think of a binary tree as a system of circles, or nodes, or as we think of it here, as a system of "
-     "caves. Each cave is connected by a tunnel, a tunnel dug out of one cave and into another. These tunnels "
-     "create a system that links everything together. At the very top of a binary tree is one root node, or "
-     "cave, like this ")
-
-m.reset()
-root = parent_with_two_children()
-build()
-talk("This cave, at the top, is called a parent node, and like a lot of parents, it can have children. "
-     "Every parent node in a binary tree can have either one, two, or no children at all. Here's what a parent "
-     "node with two children looks like ")
-
-m.reset()
-root = build_comp_tree()
-build()
-talk("Ok, now that we know what a binary tree is, we can take a look at all the different types of binary trees "
-     "there are. What you see now is one example. This binary tree is called a complete binary tree. What makes "
-     "a binary tree complete? Well, a binary tree is complete if you can look at it top to bottom, and left to "
-     "right, and find no empty spaces between all the way through. See if you can tell whether this binary tree is "
-     "complete or not.")
-talk("Since all of the circles, or nodes are filled between the first cave and the last cave, this tree can be "
-     "rightly called 'complete'.")
-
-m.reset()
-root = build_full_tree()
-build()
-talk("Moving along to our next example. What you see now is a type of a binary tree called a full binary tree. "
-     "A full binary tree is a tree where every parent node has either two children, or no children at all. "
-     "The parent nodes that don't have any children, those nodes are called 'leaves', and, just like real tree "
-     "leaves don't have branches growing out of them, binary leaf nodes have no links, or tunnels.")
-
-m.reset()
+# talk("Hello and welcome to Spelunkster 3000.")
+#
+# root = build_single_root()
+# build()
+# talk("Today, we're going to explore binary trees, and hopefully learn a thing or two along the way. Let's go! ")
+# talk("Binary trees are most commonly used in computer science, which is the science behind your phone, your "
+#      "computer, your video games, and a lot of other electronic devices we use today. In computer science, you "
+#      "can think of a binary tree as a system of circles, or nodes, or as we think of it here, as a system of "
+#      "caves. Each cave is connected by a tunnel, a tunnel dug out of one cave and into another. These tunnels "
+#      "create a system that links everything together. At the very top of a binary tree is one root node, or "
+#      "cave, like this ")
+#
+# m.reset()
+# root = parent_with_two_children()
+# build()
+# talk("This cave, at the top, is called a parent node, and like a lot of parents, it can have children. "
+#      "Every parent node in a binary tree can have either one, two, or no children at all. Here's what a parent "
+#      "node with two children looks like ")
+#
+# m.reset()
+# root = build_comp_tree()
+# build()
+# talk("Ok, now that we know what a binary tree is, we can take a look at all the different types of binary trees "
+#      "there are. What you see now is one example. This binary tree is called a complete binary tree. What makes "
+#      "a binary tree complete? Well, a binary tree is complete if you can look at it top to bottom, and left to "
+#      "right, and find no empty spaces between all the way through. See if you can tell whether this binary tree is "
+#      "complete or not.")
+# talk("Since all of the circles, or nodes are filled between the first cave and the last cave, this tree can be "
+#      "rightly called 'complete'.")
+#
+# m.reset()
+# root = build_full_tree()
+# build()
+# talk("Moving along to our next example. What you see now is a type of a binary tree called a full binary tree. "
+#      "A full binary tree is a tree where every parent node has either two children, or no children at all. "
+#      "The parent nodes that don't have any children, those nodes are called 'leaves', and, just like real tree "
+#      "leaves don't have branches growing out of them, binary leaf nodes have no links, or tunnels.")
+#
+# m.reset()
+# root = build_rand_tree()
+# build()
+# talk("Let's see what we've learned. Look at the binary tree here, represented as a system of caves, with tunnels "
+#      "dug from one cave to another. Does the system of caves shown here represent a full binary tree? If you'd like "
+#      "to move the screen, to get a better look, press W to go up, S to move down, A to move left and D to move right. "
+#      "If you think you know the tree is or is not a full binary tree hit enter to continue. Remember, a full binary "
+#      "tree is a binary tree where every parent node has either two children, or no children at all ")
+# pause()
+# answer = checkFull()
+# if not answer:
+#     talk("Drum roll please, bahdahbahdahbahdah clash. The answer is. no. This tree is not a full binary tree. It isn't "
+#          "a full binary tree because not all of the parent nodes have two child nodes.")
+# else:
+#     talk("Drum roll please, bahdahbahdahbahdah clash. The answer is yes, because all nodes have 2 or zero children.")
+#
+# m.reset()
+# root = build_degen_tree()
+# build()
+# talk("Here we have what you call a degenerate tree. A binary tree is called degenerate when each parent node has "
+#      "only one child. When you try and search a tree, which is something we'll get into soon, this tree, the "
+#      "degenerate tree, is the worst to sort. Can you think of any reasons why it's so tough to sort this tree?")
+#
+# m.reset()
+# root = build_perfect_tree()
+# build()
+# talk("Our next tree is known as a perfect binary tree. Why is it perfect? Well, as you can see, all the parent nodes "
+#      "have two children, except the ones at the very bottom. Remember what these nodes at the bottom are called? The "
+#      "nodes that don't have any branches, or caves that don't have any tunnels, coming out of them?")
+# talk("If you said 'leaves', you're right! And if you didn't, now you know. ")
+#
+# m.reset()
 root = build_rand_tree()
 build()
-talk("Let's see what we've learned. Look at the binary tree here, represented as a system of caves, with tunnels "
-     "dug from one cave to another. Does the system of caves shown here represent a full binary tree? If you'd like "
-     "to move the screen, to get a better look, press W to go up, S to move down, A to move left and D to move right. "
-     "If you think you know the tree is or is not a full binary tree hit enter to continue. Remember, a full binary "
-     "tree is a binary tree where every parent node has either two children, or no children at all ")
-pause()
-answer = checkFull()
-if not answer:
-    talk("Drum roll please, bahdahbahdahbahdah clash. The answer is. no. This tree is not a full binary tree. It isn't "
-         "a full binary tree because not all of the parent nodes have two child nodes.")
-else:
-    talk("Drum roll please, bahdahbahdahbahdah clash. The answer is yes, because all nodes have 2 or zero children.")
-
-m.reset()
-root = build_degen_tree()
-build()
-talk("Here we have what you call a degenerate tree. A binary tree is called degenerate when each parent node has "
-     "only one child. When you try and search a tree, which is something we'll get into soon, this tree, the "
-     "degenerate tree, is the worst to sort. Can you think of any reasons why it's so tough to sort this tree?")
-
-m.reset()
-root = build_perfect_tree()
-build()
-talk("Our next tree is known as a perfect binary tree. Why is it perfect? Well, as you can see, all the parent nodes "
-     "have two children, except the ones at the very bottom. Remember what these nodes at the bottom are called? The "
-     "nodes that don't have any branches, or caves that don't have any tunnels, coming out of them?")
-talk("If you said 'leaves', you're right! And if you didn't, now you know. ")
-
-m.reset()
-root = build_rand_tree()
-build()
-talk("Remember when we talked about 'searching' a binary tree, just a few moments ago? Well, now we're going to "
-     "learn what searching a binary tree means. Let's go!")
-talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
-     "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
-     "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
-talk("Let's talk about the breadth first search function first. This function will take in a tree, then search each "
-     "node in that tree, level by level, starting at the top, and moving down, one level at a time. At each level, "
-     "the search will move from left to right along the tree, then continue down another level, and so on, looking "
-     "for whatever you want the tree to find.")
-talk("The next function, the depth-first-search, has an order preference of 'left-root-right'. This can be "
-     "confusing, so listen up. The first thing this search algorithm will do is it will move to a left node if it's "
-     "possible. If it is no longer possible to move left, it will search the node it is at. The algorithm will then "
-     "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
-     "then restart its process of 'left-root-right', attempting to move left if possible. Like other search methods, "
-     "it will not search the same node twice.")
+# talk("Remember when we talked about 'searching' a binary tree, just a few moments ago? Well, now we're going to "
+#      "learn what searching a binary tree means. Let's go!")
+# talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
+#      "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
+#      "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
+# talk("Let's talk about the breadth first search function first. This function will take in a tree, then search each "
+#      "node in that tree, level by level, starting at the top, and moving down, one level at a time. At each level, "
+#      "the search will move from left to right along the tree, then continue down another level, and so on, looking "
+#      "for whatever you want the tree to find.")
+# talk("The next function, the depth-first-search, has an order preference of 'left-root-right'. This can be "
+#      "confusing, so listen up. The first thing this search algorithm will do is it will move to a left node if it's "
+#      "possible. If it is no longer possible to move left, it will search the node it is at. The algorithm will then "
+#      "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
+#      "then restart its process of 'left-root-right', attempting to move left if possible. Like other search methods, "
+#      "it will not search the same node twice.")
 temp = int(m.nodecount) - 1
 temp2 = int(m.nodecount / 2)
 target = random.randint(temp2, temp)
-talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
-     "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
-                                                                            "move the screen and press enter when you want to check your answer.")
+# talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
+#      "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
+#                                                                             "move the screen and press enter when you want to check your answer.")
 pause()
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)

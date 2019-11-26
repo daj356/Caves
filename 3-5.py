@@ -661,7 +661,7 @@ def breadth_first_search(tar):
         stepCount = stepCount + 1
         if curNode.left:
             tempArray.append(curNode.left)
-        if curNode.left:
+        if curNode.right:
             tempArray.append(curNode.right)
 
 

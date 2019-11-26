@@ -631,37 +631,39 @@ def random_search(tar):
                 stepCount = stepCount + 1
 
 
-# Block of code used to run a breadth first search for cave with the value of "tar"
+# Block of code used to run a depth first search for cave with the value of "tar"
+def depth_first_search(root, tar, step=0, stepCount=0):
+    if root:
+        if root.value == tar:
+            stepCount = step
+        if root.left:
+            step = step + 1
+            stepCount = depth_first_search(root.left, tar, step, stepCount)
+        m.selection = root
+        build()
+        pygame.time.wait(2000)
+        if root.right:
+            step = step + 1
+            stepCount = depth_first_search(root.right, tar, step, stepCount)
+    while m.selection.parent:
+        m.selection = m.selection.parent
+    return stepCount
+
+
+# Block of code that will be used to breadth first search for the cave will a value of "tar"
 def breadth_first_search(tar):
     stepCount = 0
     tempArray = [m.selection]
     while len(tempArray) > 0:
-        curNode = tempArray[0]
-        if curNode.value == tar:
-            while m.selection.parent:
-                m.selection = m.selection.parent
-            return stepCount
-        if curNode.left:
-            tempArray.append(curNode.left)
-        if curNode.right:
-            tempArray.append(curNode.right)
-        tempArray.pop(0)
-        stepCount = stepCount + 1
-
-
-# Block of code that will be used to depth first search for the cave will a value of "tar"
-def depth_first_search(tar):
-    stepCount = 0
-    tempArray = [m.selection]
-    while len(tempArray) > 0:
-        curNode = tempArray.pop()
+        curNode = tempArray.pop(0)
         if curNode.value == tar:
             return stepCount
         stepCount = stepCount + 1
-        if curNode.right:
-            tempArray.append(curNode.right)
         if curNode.left:
             tempArray.append(curNode.left)
+        if curNode.left:
+            tempArray.append(curNode.right)
+
 
 
 # Builds the current version of the tree we are wanting. The parameter control will determine whether or not to write
@@ -819,7 +821,7 @@ talk("Now that we know how to search a binary tree, let's interact with one. See
 pause()
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
-depthCount = depth_first_search(target)
+depthCount = depth_first_search(root, target)
 
 talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
 talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
@@ -849,7 +851,7 @@ while loop is True:
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)
     breadthCount = breadth_first_search(target)
-    depthCount = depth_first_search(target)
+    depthCount = depth_first_search(root, target)
     pause()
     talk("Random search took " + str(randCount) + " steps, breadth first search took " + str(breadthCount) +
          " steps and depth first search took " + str(depthCount) + " steps.")

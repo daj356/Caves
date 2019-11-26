@@ -1,4 +1,3 @@
-import time
 import pygame
 import sys
 import os
@@ -70,18 +69,14 @@ Y_START = 200
 Y_STEP = BOX_SIZE[1] * 2
 
 # The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
-NUM_OF_NODES = 10
+NUM_OF_NODES = 30
+MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
 
 # A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
 # they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
-def talk(say):
-    engine.say(say)
-    engine.runAndWait()
-
-
 class Master(object):
     def __init__(self):
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
@@ -253,6 +248,11 @@ class Node(object):
         return count
 
 
+def talk(say):
+    engine.say(say)
+    engine.runAndWait()
+
+
 # Quits the game
 def quit():
     print("QUIT")
@@ -260,6 +260,8 @@ def quit():
     sys.exit()
 
 
+# Controls user input. Interface() works similarly, but pause allows to user only to move the screen display and hit
+# enter to continue the program.
 def pause():
     pause = True
     while pause is True:
@@ -280,6 +282,8 @@ def pause():
                     print("Invalid key.")
 
 
+# Same function as pause(), but allows extra functionality of using arrow keys to move through the tree and add nodes
+# and R to reset the tree.
 def interface():
     global LAST
     inter = True
@@ -378,6 +382,7 @@ def draw(control):
         m.display.blit(help3, hrect)
 
 
+# Draws nodes and add instructions for the 'pause' screen.
 def pauseHelp():
     for depth_level in m.nodelist:
         for node in depth_level:
@@ -462,10 +467,113 @@ def parent_with_two_children():
     return root
 
 
+# Builds a hard-coded full binary tree. Guaranteed to be a full binary tree
+def build_full_tree():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.left
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.right
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.left
+    insert_both(root, root.depth)
+
+    set_all_rects()
+    return root
+
+
+# Builds a complete binary tree, every parent has 2 children nodes
+def build_comp_tree():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.left
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+
+    set_all_rects()
+    return root
+
+
+# Builds a perfect binary tree, all interior nodes have two children and
+# for every parent node, the two children nodes are at the same depth
+def build_perfect_tree():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    root = root.left
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.left
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+    root = m.selection
+    root = root.right
+    root = root.left
+    insert_both(root, root.depth)
+    root = root.parent
+    root = root.right
+    insert_both(root, root.depth)
+
+    set_all_rects()
+    return root
+
+
 # Inserts both a left and a right node for a root (parent) node
 def insert_both(root, depth):
     insert_node_left(root, depth)
     insert_node_right(root, depth)
+
+
+# Builds a degenerate tree, where each parent only has one child
+def build_degen_tree():
+    root = create_root_node()
+    m.selection = root
+    # Randomly chooses if degen tree should be left or right
+    rand = random.randint(0, 1)
+    if rand == 0:
+        while root.count_children() < NUM_OF_NODES:
+            # If/else statement creates node.
+            if m.selection.left:
+                m.selection = m.selection.left
+            else:
+                insert_node_left(m.selection, m.selection.depth)
+                set_all_rects()
+    if rand == 1:
+        while root.count_children() < 6:
+            if m.selection.right:
+                m.selection = m.selection.right
+            else:
+                insert_node_right(m.selection, m.selection.depth)
+                set_all_rects()
+    return root
 
 
 # Adds a new node to the m.nodelist[depth] which allows us to know how many nodes a tree has
@@ -506,8 +614,6 @@ def set_all_rects():
 def random_search(tar):
     stepCount = 0
     while True:
-        build()
-        pygame.time.wait(2000)
         m.selection.visit = 1
         if m.selection.value == tar:
             while m.selection.parent:
@@ -528,43 +634,37 @@ def random_search(tar):
                 stepCount = stepCount + 1
 
 
-# Block of code used to run a depth first search for cave with the value of "tar"
-def depth_first_search(root, tar, step=0, stepCount=0):
-    if root:
-        if root.value == tar:
-            stepCount = step
-        if root.left:
-            step = step + 1
-            stepCount = depth_first_search(root.left, tar, step, stepCount)
-        m.selection = root
-        build()
-        pygame.time.wait(2000)
-        if root.right:
-            step = step + 1
-            stepCount = depth_first_search(root.right, tar, step, stepCount)
-    while m.selection.parent:
-        m.selection = m.selection.parent
-    return stepCount
-
-
-# Block of code that will be used to breadth first search for the cave will a value of "tar"
+# Block of code used to run a breadth first search for cave with the value of "tar"
 def breadth_first_search(tar):
-    steps = 0
     stepCount = 0
     tempArray = [m.selection]
     while len(tempArray) > 0:
-        curNode = tempArray.pop(0)
-        m.selection = curNode
-        build()
-        pygame.time.wait(2000)
-        stepCount = stepCount + 1
+        curNode = tempArray[0]
         if curNode.value == tar:
-            steps = stepCount
+            while m.selection.parent:
+                m.selection = m.selection.parent
+            return stepCount
         if curNode.left:
             tempArray.append(curNode.left)
         if curNode.right:
             tempArray.append(curNode.right)
-    return steps
+        tempArray.pop(0)
+        stepCount = stepCount + 1
+
+
+# Block of code that will be used to depth first search for the cave will a value of "tar"
+def depth_first_search(tar):
+    stepCount = 0
+    tempArray = [m.selection]
+    while len(tempArray) > 0:
+        curNode = tempArray.pop()
+        if curNode.value == tar:
+            return stepCount
+        stepCount = stepCount + 1
+        if curNode.right:
+            tempArray.append(curNode.right)
+        if curNode.left:
+            tempArray.append(curNode.left)
 
 
 # Builds the current version of the tree we are wanting. The parameter control will determine whether or not to write
@@ -586,29 +686,46 @@ def pauseBuild():
     pygame.display.flip()
 
 
-# initialization
+# Checks to see if the tree is a full tree. Returns false if any node has only 1 child. Returns true if all nodes
+# have zero or two children.
+def checkFull():
+    for depth_level in m.nodelist:
+        for node in depth_level:
+            if (node.left and node.right is None) or (node.right and node.left is None):
+                return False
+    return True
+
+
+def endInstruct():
+    pic_select = pygame.image.load(r'resources/background.jpg')
+    pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
+    screen.blit(pic_select, [0, 0])
+    for depth_level in m.nodelist:
+        for node in depth_level:
+            node.draw()
+    if m.selection:
+        s_rect = pygame.rect.Rect(m.selection.rect.topleft, m.selection.rect.size)
+        s_rect.top += m.y_shift
+        s_rect.left += m.x_shift
+        text = FONT2.render("Node depth: %d" % m.selection.depth, 1, (200, 255, 255))
+        trect = text.get_rect()
+        trect.center = m.display.get_rect().center
+        trect.bottom = m.display.get_rect().bottom - 10
+        help = FONT.render("1 - Redo Tree Building", 1,
+                           WHITE)
+        help2 = FONT.render("ENTER - Continue Program", 1, WHITE)
+        hrect = help.get_rect()
+        hrect.centerx = trect.centerx
+        hrect.top = trect.top - trect.height
+        m.display.blit(help, hrect)
+        hrect.top -= hrect.height
+        m.display.blit(help2, hrect)
+    pygame.display.flip()
+
 m = Master()
 m.intro_screen()
-talk("Hello and welcome to Spelunkster 3000.")
+talk('Hello and welcome to a brief demo of our project. Watch as we construct nodes and add them to a tree.')
 root = build_single_root()
-build()
-talk('Describe purpose of program. Single root is shown. Narrator voice.')
-m.reset()
-root = parent_with_two_children()
-talk('Describe how caves are added to root node. Parent with two children shown. Narrator voice.')
-m.reset()
-root = build_rand_tree()
-talk('This is the cave they will look at the most. Currently random, will include standard cave later. Begin to '
-     'explain searches in terms of characters moving through caves. Depth-first is Left-Root-Right and Breadth first '
-     'is level by level. We have been getting them mixed up this whole time. I fixed the old code to reflect this. '
-     'Narrator voice.')
-talk('Have each character introduce themselves probably. Try and explain why they do what they do. Use appropriate '
-     'voice.')
-num = depth_first_search(root, 4)
-build()
-num2 = breadth_first_search(4)
-build()
-num3 = random_search(4)
-talk('After this maybe run the searches again on a different tree, prompting them to guess which one is faster. Not '
-     'completely sure on this one yet.')
+build(True)
+interface()
 quit()

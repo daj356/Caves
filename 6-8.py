@@ -73,6 +73,7 @@ NUM_OF_NODES = 30
 MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
+
 # A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
 # they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
 # the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
@@ -247,10 +248,10 @@ class Node(object):
         return count
 
 
-
 def talk(say):
     engine.say(say)
     engine.runAndWait()
+
 
 # Quits the game
 def quit():
@@ -633,37 +634,38 @@ def random_search(tar):
                 stepCount = stepCount + 1
 
 
-# Block of code used to run a breadth first search for cave with the value of "tar"
+# Block of code used to run a depth first search for cave with the value of "tar"
+def depth_first_search(root, tar, step=0, stepCount=0):
+    if root:
+        if root.value == tar:
+            stepCount = step
+        if root.left:
+            step = step + 1
+            stepCount = depth_first_search(root.left, tar, step, stepCount)
+        m.selection = root
+        build()
+        pygame.time.wait(2000)
+        if root.right:
+            step = step + 1
+            stepCount = depth_first_search(root.right, tar, step, stepCount)
+    while m.selection.parent:
+        m.selection = m.selection.parent
+    return stepCount
+
+
+# Block of code that will be used to breadth first search for the cave will a value of "tar"
 def breadth_first_search(tar):
     stepCount = 0
     tempArray = [m.selection]
     while len(tempArray) > 0:
-        curNode = tempArray[0]
-        if curNode.value == tar:
-            while m.selection.parent:
-                m.selection = m.selection.parent
-            return stepCount
-        if curNode.left:
-            tempArray.append(curNode.left)
-        if curNode.right:
-            tempArray.append(curNode.right)
-        tempArray.pop(0)
-        stepCount = stepCount + 1
-
-
-# Block of code that will be used to depth first search for the cave will a value of "tar"
-def depth_first_search(tar):
-    stepCount = 0
-    tempArray = [m.selection]
-    while len(tempArray) > 0:
-        curNode = tempArray.pop()
+        curNode = tempArray.pop(0)
         if curNode.value == tar:
             return stepCount
         stepCount = stepCount + 1
-        if curNode.right:
-            tempArray.append(curNode.right)
         if curNode.left:
             tempArray.append(curNode.left)
+        if curNode.left:
+            tempArray.append(curNode.right)
 
 
 # Builds the current version of the tree we are wanting. The parameter control will determine whether or not to write
@@ -802,11 +804,11 @@ talk("Remember when we talked about 'searching' a binary tree, just a few moment
 talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
      "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
      "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
-talk("Let's talk about the depth first search function first. This function will take in a tree, then search each "
+talk("Let's talk about the breadth first search function first. This function will take in a tree, then search each "
      "node in that tree, level by level, starting at the top, and moving down, one level at a time. At each level, "
      "the search will move from left to right along the tree, then continue down another level, and so on, looking "
      "for whatever you want the tree to find.")
-talk("The next function, the breadth-first-search, has an order preference of 'left-root-right'. This can be "
+talk("The next function, the depth-first-search, has an order preference of 'left-root-right'. This can be "
      "confusing, so listen up. The first thing this search algorithm will do is it will move to a left node if it's "
      "possible. If it is no longer possible to move left, it will search the node it is at. The algorithm will then "
      "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
@@ -817,11 +819,11 @@ temp2 = int(m.nodecount / 2)
 target = random.randint(temp2, temp)
 talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
      "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
-     "move the screen and press enter when you want to check your answer.")
+                                                                            "move the screen and press enter when you want to check your answer.")
 pause()
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
-depthCount = depth_first_search(target)
+depthCount = depth_first_search(root, target)
 
 talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
 talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
@@ -841,15 +843,15 @@ while loop is True:
     temp = int(m.nodecount) - 1
     temp2 = int(m.nodecount / 2)
     target = random.randint(temp2, temp)
-    talk("Now, with your binary tree cave system built, try and apply what you know about breadth first search "
-         "and depth first search functions to guess which search will find cave number " + str(target) + " the "
-         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
-         " then right, while a depth first search function likes to move left to right, from one level to the "
-         "next level.")
+    talk(
+        "Now, with your binary tree cave system built, try and apply what you know about breadth first search and depth"
+        " first search functions to guess which search will find cave number " + str(target) + " the fastest. But, "
+                                                                                               "before you do, keep in mind that a depth first search function likes to move left, then right, while a"
+                                                                                               " breadth first search function likes to move left to right, from one level to the next level.")
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)
     breadthCount = breadth_first_search(target)
-    depthCount = depth_first_search(target)
+    depthCount = depth_first_search(root, target)
     pause()
     talk("Random search took " + str(randCount) + " steps, breadth first search took " + str(breadthCount) +
          " steps and depth first search took " + str(depthCount) + " steps.")

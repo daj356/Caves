@@ -13,10 +13,7 @@ from pygame.locals import *
 # Initializes the text-to-speech function
 engine = pyttsx3.init()
 engine.setProperty('rate', 130)  # Speed percent
-
 voices = engine.getProperty('voices')
-# Sets a female voice
-engine.setProperty('voice', voices[1].id)
 
 # Initializes pygame
 pygame.init()
@@ -94,6 +91,8 @@ class Master(object):
         self.clock = pygame.time.Clock()
         self.selection = None
         self.sound = 0
+        # True = male, False = Female
+        self.voice = True
 
     # Formats the text
     def text_format(self, message, textFont, textSize, textColor):
@@ -160,6 +159,79 @@ class Master(object):
             pygame.display.update()
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
+
+    # Select Voice
+    def voice_selection(self):
+        index = 0
+        # add "info" back to the list below
+        menu_selection_list = ["male", "female"]
+        voice_select = True
+        selected = menu_selection_list[index]
+
+        while voice_select:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        selected = "male"
+                    elif event.key == pygame.K_DOWN:
+                        selected = "female"
+                    if event.key == pygame.K_RETURN:
+                        if selected == "male":
+                            voice_select = False
+                            m.voice = True
+                            # Sets a male voice
+                            engine.setProperty('voice', voices[0].id)
+
+                            pygame.display.flip()
+                        elif selected == "female":
+                            voice_select = False
+                            m.voice = False
+                            # Sets a female voice
+                            engine.setProperty('voice', voices[1].id)
+
+                            pygame.display.flip()
+
+            # Voice Selection UI
+            screen.fill(BLACK)
+            title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
+
+            if selected == "male":
+                text_male = self.text_format("MALE", OPTIONS_FONT, 85, YELLOW)
+            else:
+                text_male = self.text_format("MALE", OPTIONS_FONT, 75, WHITE)
+
+            if selected == "female":
+                text_female = self.text_format("FEMALE", OPTIONS_FONT, 85, YELLOW)
+            else:
+                text_female = self.text_format("FEMALE", OPTIONS_FONT, 75, WHITE)
+
+            title_rect = title.get_rect()
+            male_rect = text_male.get_rect()
+            female_rect = text_female.get_rect()
+
+            # Game title
+            screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
+
+            # Male text
+            screen.blit(text_male, (WIDTH / 2 - (male_rect[2] / 2), 250))
+            # Male Character
+            male = pygame.image.load(r'resources/Miner2.png')
+            male = pygame.transform.scale(male, (74, 130))
+            screen.blit(male, (WIDTH / 2 + male_rect[2] / 2 + 50, 250))
+
+            # Female text
+            screen.blit(text_female, (WIDTH / 2 - (female_rect[2] / 2), 420))
+            # Female Character
+            female = pygame.image.load(r'resources/Miner_Female2.png')
+            female = pygame.transform.scale(female, (74, 130))
+            screen.blit(female, (WIDTH / 2 + female_rect[2] / 2 + 25, 420))
+
+            pygame.display.update()
+            self.clock.tick(60)
+            pygame.display.set_caption("Voice Selection")
 
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
@@ -573,6 +645,19 @@ def build(control=None):
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
     screen.blit(pic_select, [0, 0])
+
+    # These images came from this URL: https://scribblenauts.fandom.com/wiki/Miner
+    # We do not take credit for the male and female miner .png's used in this game
+    # We are not profiting off of this and can change the pictures if need be
+    if m.voice:
+        miner_select = pygame.image.load(r'resources/Miner2.png')
+        miner_select = pygame.transform.scale(miner_select, (74, 130))
+    elif not m.voice:
+        miner_select = pygame.image.load(r'resources/Miner_Female2.png')
+        miner_select = pygame.transform.scale(miner_select, (74, 130))
+    # The numbers change the space between this character and the edge of the window
+    screen.blit(miner_select, [10, 10])
+
     draw(control)
     pygame.display.flip()
 
@@ -582,6 +667,19 @@ def pauseBuild():
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
     screen.blit(pic_select, [0, 0])
+
+    # These images came from this URL: https://scribblenauts.fandom.com/wiki/Miner
+    # We do not take credit for the male and female miner .png's used in this game
+    # We are not profiting off of this and can change the pictures if need be
+    if m.voice:
+        miner_select = pygame.image.load(r'resources/Miner2.png')
+        miner_select = pygame.transform.scale(miner_select, (74, 130))
+    elif not m.voice:
+        miner_select = pygame.image.load(r'resources/Miner_Female2.png')
+        miner_select = pygame.transform.scale(miner_select, (74, 130))
+    # The numbers change the space between this character and the edge of the window
+    screen.blit(miner_select, [10, 10])
+
     pauseHelp()
     pygame.display.flip()
 
@@ -589,6 +687,7 @@ def pauseBuild():
 # initialization
 m = Master()
 m.intro_screen()
+m.voice_selection()
 talk("Hello and welcome to Spelunkster 3000.")
 root = build_single_root()
 build()

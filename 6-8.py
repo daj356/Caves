@@ -71,9 +71,9 @@ MAX_NUM = 100
 KEYBOARD_PAN_STEP = 50
 
 
-# A bit more confusing, Master is the whole display, tree and all. Nodelist and Count are pretty self-explanatory,
-# they hold information about the tree. X_shift and Y_shift control how the WASD controls move the camera. Idk what
-# the clock is for tbh. Selection handles which key the user is pressing. All usages of "m" is the initialized Master.
+# Display contains information about the users screen display. Nodelist is a list of the nodes. Nodecount is the
+# number of nodes. x_shift and y_shift control how the screen gets moved. Selection will get used to point at
+# different nodes in the tree which helps visualize the user 'moving' around the tree.
 class Master(object):
     def __init__(self):
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
@@ -85,7 +85,6 @@ class Master(object):
         self.y_shift = 0
         self.clock = pygame.time.Clock()
         self.selection = None
-        self.sound = 0
         # True = male, False = Female
         self.voice = True
 
@@ -95,7 +94,7 @@ class Master(object):
         newText = newFont.render(message, 0, textColor)
         return newText
 
-    # Resets the tree to an empty tree with a single node
+    # Resets the tree to an empty tree with a single node. Used whenever you want to delete a tree and make a new one.
     def reset(self):
         self.nodelist = []
         self.nodecount = 1
@@ -107,7 +106,6 @@ class Master(object):
     # Main Menu
     def intro_screen(self):
         index = 0
-        # add "info" back to the list below
         menu_selection_list = ["start", "quit"]
         intro_screen = True
         selected = menu_selection_list[index]
@@ -194,14 +192,14 @@ class Master(object):
             title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
 
             if selected == "male":
-                text_male = self.text_format("MALE", OPTIONS_FONT, 85, YELLOW)
+                text_male = self.text_format("MALE VOICE", OPTIONS_FONT, 85, YELLOW)
             else:
-                text_male = self.text_format("MALE", OPTIONS_FONT, 75, WHITE)
+                text_male = self.text_format("MALE VOICE", OPTIONS_FONT, 75, WHITE)
 
             if selected == "female":
-                text_female = self.text_format("FEMALE", OPTIONS_FONT, 85, YELLOW)
+                text_female = self.text_format("FEMALE VOICE", OPTIONS_FONT, 85, YELLOW)
             else:
-                text_female = self.text_format("FEMALE", OPTIONS_FONT, 75, WHITE)
+                text_female = self.text_format("FEMALE VOICE", OPTIONS_FONT, 75, WHITE)
 
             title_rect = title.get_rect()
             male_rect = text_male.get_rect()
@@ -220,7 +218,8 @@ class Master(object):
 
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
-# and right and the depth.
+# and right and the depth. Rect contains information about where the Node is on the screen display. Value is the
+# unique number given to the cave (root will always be 1 and will increase by 1 for every cave.)
 class Node(object):
     def __init__(self, parent=None, right=None, left=None, depth=None):
         self.type = None
@@ -229,9 +228,8 @@ class Node(object):
         self.left = left
         self.depth = depth
         self.rect = None
-        self.visit = 0
+        self.value = m.nodecount
         m.nodecount += 1
-        self.value = m.nodecount - 1
 
     # Provides on-screen depth information for the user at the bottom of the screen
     def __str__(self):
@@ -310,6 +308,7 @@ class Node(object):
         return count
 
 
+# The parameter 'say' will be spoken by the text to speech function.
 def talk(say):
     engine.say(say)
     engine.runAndWait()
@@ -444,7 +443,9 @@ def draw(control):
         m.display.blit(help3, hrect)
 
 
-# Draws nodes and add instructions for the 'pause' screen.
+# Screen to print instructions when the function pause() is called. Separate from the interface() instructions,
+# this one does not include instructions on how to insert caves onto the node because that won't be possible when
+# pause() is called.
 def pauseHelp():
     for depth_level in m.nodelist:
         for node in depth_level:
@@ -673,10 +674,10 @@ def set_all_rects():
             node.set_rect(arrayOfCoords)
 
 
+# Used to randomly search a tree for cave with the value of "tar"
 def random_search(tar):
     stepCount = 0
     while True:
-        m.selection.visit = 1
         if m.selection.value == tar:
             while m.selection.parent:
                 m.selection = m.selection.parent
@@ -704,6 +705,9 @@ def depth_first_search(root, tar, step=0, stepCount=0):
         if root.left:
             step = step + 1
             stepCount = depth_first_search(root.left, tar, step, stepCount)
+        m.selection = root
+        build()
+        pygame.time.wait(2000)
         if root.right:
             step = step + 1
             stepCount = depth_first_search(root.right, tar, step, stepCount)
@@ -718,9 +722,9 @@ def breadth_first_search(tar):
     tempArray = [m.selection]
     while len(tempArray) > 0:
         curNode = tempArray.pop(0)
-        m.selection = curNode
         if curNode.value == tar:
             return stepCount
+        stepCount = stepCount + 1
         if curNode.left:
             tempArray.append(curNode.left)
         if curNode.right:
@@ -756,6 +760,8 @@ def checkFull():
     return True
 
 
+# Prints instructions for the end of the game. Enter to continue the program to the end, 1 to redo the tree buliding
+# portion of the program.
 def endInstruct():
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
@@ -864,11 +870,11 @@ talk("Remember when we talked about 'searching' a binary tree, just a few moment
 talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
      "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
      "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
-talk("Let's talk about the breadth first search function first. This function will take in a tree, then search each "
+talk("Let's talk about the depth first search function first. This function will take in a tree, then search each "
      "node in that tree, level by level, starting at the top, and moving down, one level at a time. At each level, "
      "the search will move from left to right along the tree, then continue down another level, and so on, looking "
      "for whatever you want the tree to find.")
-talk("The next function, the depth-first-search, has an order preference of 'left-root-right'. This can be "
+talk("The next function, the breadth-first-search, has an order preference of 'left-root-right'. This can be "
      "confusing, so listen up. The first thing this search algorithm will do is it will move to a left node if it's "
      "possible. If it is no longer possible to move left, it will search the node it is at. The algorithm will then "
      "search the previous node that it just came from. Next, if it can move to a right node, it will do that. It will "
@@ -903,11 +909,11 @@ while loop is True:
     temp = int(m.nodecount) - 1
     temp2 = int(m.nodecount / 2)
     target = random.randint(temp2, temp)
-    talk(
-        "Now, with your binary tree cave system built, try and apply what you know about breadth first search and depth"
-        " first search functions to guess which search will find cave number " + str(target) + " the fastest. But, "
-        "before you do, keep in mind that a depth first search function likes to move left, then right, while a"
-        " breadth first search function likes to move left to right, from one level to the next level.")
+    talk("Now, with your binary tree cave system built, try and apply what you know about breadth first search "
+         "and depth first search functions to guess which search will find cave number " + str(target) + " the "
+                                                                                                         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
+                                                                                                         " then right, while a depth first search function likes to move left to right, from one level to the "
+                                                                                                         "next level.")
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)
     breadthCount = breadth_first_search(target)

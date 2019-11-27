@@ -14,6 +14,9 @@ engine = pyttsx3.init()
 engine.setProperty('rate', 130)  # Speed percent
 voices = engine.getProperty('voices')
 
+# Sets a female voice
+engine.setProperty('voice', voices[1].id)
+
 # Initializes pygame
 pygame.init()
 
@@ -89,7 +92,6 @@ class Master(object):
         self.y_shift = 0
         self.clock = pygame.time.Clock()
         self.selection = None
-        self.sound = 0
         # True = male, False = Female
         self.voice = True
 
@@ -99,7 +101,7 @@ class Master(object):
         newText = newFont.render(message, 0, textColor)
         return newText
 
-    # Resets the tree to an empty tree with a single node
+    # Resets the tree to an empty tree with a single node. Used whenever you want to delete a tree and make a new one.
     def reset(self):
         self.nodelist = []
         self.nodecount = 1
@@ -111,7 +113,6 @@ class Master(object):
     # Main Menu
     def intro_screen(self):
         index = 0
-        # add "info" back to the list below
         menu_selection_list = ["start", "quit"]
         intro_screen = True
         selected = menu_selection_list[index]
@@ -222,7 +223,8 @@ class Master(object):
 
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
-# and right and the depth.
+# and right and the depth. Rect contains information about where the Node is on the screen display. Value is the
+# unique number given to the cave (root will always be 1 and will increase by 1 for every cave.)
 class Node(object):
     def __init__(self, parent=None, right=None, left=None, depth=None):
         self.type = None
@@ -231,9 +233,8 @@ class Node(object):
         self.left = left
         self.depth = depth
         self.rect = None
-        self.visit = 0
+        self.value = m.nodecount
         m.nodecount += 1
-        self.value = m.nodecount - 1
 
     # Provides on-screen depth information for the user at the bottom of the screen
     def __str__(self):
@@ -312,6 +313,12 @@ class Node(object):
         return count
 
 
+# The parameter 'say' will be spoken by the text to speech function.
+def talk(say):
+    engine.say(say)
+    engine.runAndWait()
+
+
 # Quits the game
 def quit():
     print("QUIT")
@@ -319,6 +326,7 @@ def quit():
     sys.exit()
 
 
+# Called when you want the user to look around at a tree that might be too big to fit on the screen.
 def pause():
     pause = True
     while pause is True:
@@ -339,6 +347,8 @@ def pause():
                     print("Invalid key.")
 
 
+# Called when you want the user to be able to insert nodes onto a tree. Also allows them to move the screen with W A
+# S D. Enter will end the function.
 def interface():
     global LAST
     inter = True
@@ -437,6 +447,9 @@ def draw(control):
         m.display.blit(help3, hrect)
 
 
+# Screen to print instructions when the function pause() is called. Separate from the interface() instructions,
+# this one does not include instructions on how to insert caves onto the node because that won't be possible when
+# pause() is called.
 def pauseHelp():
     for depth_level in m.nodelist:
         for node in depth_level:
@@ -665,10 +678,10 @@ def set_all_rects():
             node.set_rect(arrayOfCoords)
 
 
+# Used to randomly search a tree for cave with the value of "tar"
 def random_search(tar):
     stepCount = 0
     while True:
-        m.selection.visit = 1
         if m.selection.value == tar:
             while m.selection.parent:
                 m.selection = m.selection.parent
@@ -751,6 +764,8 @@ def checkFull():
     return True
 
 
+# Prints instructions for the end of the game. Enter to continue the program to the end, 1 to redo the tree buliding
+# portion of the program.
 def endInstruct():
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
@@ -874,7 +889,7 @@ temp2 = int(m.nodecount / 2)
 target = random.randint(temp2, temp)
 talk("Now that we know how to search a binary tree, let's interact with one. See if you can guess how long it will "
      "take for both search algorithms to find cave number " + str(target) + ". Again, use the keys W, A, S, and D to "
-                                                                            "move the screen and press enter when you want to check your answer.")
+     "move the screen and press enter when you want to check your answer.")
 pause()
 randCount = random_search(target)
 breadthCount = breadth_first_search(target)
@@ -902,9 +917,9 @@ while loop is True:
     target = random.randint(temp2, temp)
     talk("Now, with your binary tree cave system built, try and apply what you know about breadth first search "
          "and depth first search functions to guess which search will find cave number " + str(target) + " the "
-                                                                                                         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
-                                                                                                         " then right, while a depth first search function likes to move left to right, from one level to the "
-                                                                                                         "next level.")
+         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
+         " then right, while a depth first search function likes to move left to right, from one level to the "
+         "next level.")
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)
     breadthCount = breadth_first_search(target)

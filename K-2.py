@@ -1,4 +1,3 @@
-import time
 import pygame
 import sys
 import os
@@ -516,6 +515,36 @@ def build_rand_tree():
             m.selection = m.selection.parent
     return root
 
+# tree1() and tree2() build hard coded trees that will be used to explain searches. We wanted to avoided having
+# degenerate trees pop up which could happen with the low node count, so we opted to hard code the trees K-2 will
+# look at which avoids this issue.
+def tree1():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    insert_node_right(root.right, root.right.depth)
+    insert_both(root.left, root.right.depth)
+    m.selection = root.left
+    m.selection = m.selection.right
+    insert_node_left(m.selection, m.selection.depth)
+    while m.selection.parent:
+        m.selection = m.selection.parent
+    set_all_rects()
+    return root
+
+def tree2():
+    root = create_root_node()
+    m.selection = root
+    insert_both(root, root.depth)
+    insert_both(root.right, root.right.depth)
+    insert_node_right(root.left, root.left.depth)
+    m.selection = root.left
+    insert_node_left(m.selection.right, m.selection.right.depth)
+    m.selection = root.right
+    insert_node_left(m.selection.left, m.selection.left.depth)
+    m.selection = m.selection.parent
+    set_all_rects()
+    return root
 
 # Builds a single parent node as a tree, for displaying an example of a parent node
 def build_single_root():
@@ -579,8 +608,7 @@ def random_search(tar):
     stepCount = 0
     while True:
         build()
-        pygame.time.wait(2000)
-        m.selection.visit = 1
+        pygame.time.wait(500)
         if m.selection.value == tar:
             while m.selection.parent:
                 m.selection = m.selection.parent
@@ -688,26 +716,47 @@ def pauseBuild():
 m = Master()
 m.intro_screen()
 m.voice_selection()
-talk("Hello and welcome to Spelunkster 3000.")
-root = build_single_root()
+# talk("Hello and welcome to Spelunkster 3000.")
+# root = build_single_root()
+# build()
+# talk('Describe purpose of program. Single root is shown. Narrator voice.')
+# m.reset()
+# root = parent_with_two_children()
+# talk('Describe how caves are added to root node. Parent with two children shown. Narrator voice.')
+# m.reset()
+root = tree1()
 build()
-talk('Describe purpose of program. Single root is shown. Narrator voice.')
+# talk('This is the cave they will look at the most. Currently random, will include standard cave later. Begin to '
+#      'explain searches in terms of characters moving through caves. Depth-first is Left-Root-Right and Breadth first '
+#      'is level by level. We have been getting them mixed up this whole time. I fixed the old code to reflect this. '
+#      'Narrator voice.')
+# talk('Have each character introduce themselves probably. Try and explain why they do what they do. Use appropriate '
+#      'voice.')
+target = 4
+# talk("First, lets see how -name- digs a cave. This can either be really quick or really slow.")
+randCount = random_search(target)
+talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
+talk("Now we will see how -name- searches a cave system.")
+breadthCount = breadth_first_search(target)
+build()
+talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
+talk("Finally, lets see how -name- searches a cave system.")
+depthCount = depth_first_search(root, target)
+build()
+talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
+
+talk('After this maybe run the searches again on a different tree, prompting them to guess which one is faster. Tell '
+     'them how the pause menu works (WASD moves screen, enter to continue).')
 m.reset()
-root = parent_with_two_children()
-talk('Describe how caves are added to root node. Parent with two children shown. Narrator voice.')
-m.reset()
-root = build_rand_tree()
-talk('This is the cave they will look at the most. Currently random, will include standard cave later. Begin to '
-     'explain searches in terms of characters moving through caves. Depth-first is Left-Root-Right and Breadth first '
-     'is level by level. We have been getting them mixed up this whole time. I fixed the old code to reflect this. '
-     'Narrator voice.')
-talk('Have each character introduce themselves probably. Try and explain why they do what they do. Use appropriate '
-     'voice.')
-num = depth_first_search(root, 4)
+root = tree2()
 build()
-num2 = breadth_first_search(4)
-build()
-num3 = random_search(4)
-talk('After this maybe run the searches again on a different tree, prompting them to guess which one is faster. Not '
-     'completely sure on this one yet.')
+pause()
+randCount = random_search(target)
+breadthCount = breadth_first_search(target)
+depthCount = depth_first_search(root, target)
+
+talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
+talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
+talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
+talk('Outro.')
 quit()

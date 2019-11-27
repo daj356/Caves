@@ -215,10 +215,23 @@ class Master(object):
             male_rect = text_male.get_rect()
             female_rect = text_female.get_rect()
 
-            # Main Menu Text
+            # Game title
             screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
+
+            # Male text
             screen.blit(text_male, (WIDTH / 2 - (male_rect[2] / 2), 250))
-            screen.blit(text_female, (WIDTH / 2 - (female_rect[2] / 2), 320))
+            # Male Character
+            male = pygame.image.load(r'resources/Miner2.png')
+            male = pygame.transform.scale(male, (74, 130))
+            screen.blit(male, (WIDTH / 2 + male_rect[2] / 2 + 50, 250))
+
+            # Female text
+            screen.blit(text_female, (WIDTH / 2 - (female_rect[2] / 2), 420))
+            # Female Character
+            female = pygame.image.load(r'resources/Miner_Female2.png')
+            female = pygame.transform.scale(female, (74, 130))
+            screen.blit(female, (WIDTH / 2 + female_rect[2] / 2 + 25, 420))
+
             pygame.display.update()
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")

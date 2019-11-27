@@ -12,15 +12,7 @@ from pygame.locals import *
 # Initializes the text-to-speech function
 engine = pyttsx3.init()
 engine.setProperty('rate', 130)  # Speed percent
-
 voices = engine.getProperty('voices')
-# # Sets a male voice
-# engine.setProperty('voice', voices[0].id)
-#
-# # Sets a female voice
-# engine.setProperty('voice', voices[1].id)
-
-print(voices)
 
 # Initializes pygame
 pygame.init()
@@ -197,7 +189,7 @@ class Master(object):
 
                             pygame.display.flip()
 
-            # Main Menu UI
+            # Voice Selection UI
             screen.fill(BLACK)
             title = m.text_format("SPELUNKSTER 3000", TITLE_FONT, 65, RED)
 
@@ -217,24 +209,14 @@ class Master(object):
 
             # Game title
             screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
-
             # Male text
             screen.blit(text_male, (WIDTH / 2 - (male_rect[2] / 2), 250))
-            # Male Character
-            male = pygame.image.load(r'resources/Miner2.png')
-            male = pygame.transform.scale(male, (74, 130))
-            screen.blit(male, (WIDTH / 2 + male_rect[2] / 2 + 50, 250))
-
             # Female text
-            screen.blit(text_female, (WIDTH / 2 - (female_rect[2] / 2), 420))
-            # Female Character
-            female = pygame.image.load(r'resources/Miner_Female2.png')
-            female = pygame.transform.scale(female, (74, 130))
-            screen.blit(female, (WIDTH / 2 + female_rect[2] / 2 + 25, 420))
+            screen.blit(text_female, (WIDTH / 2 - (female_rect[2] / 2), 320))
 
             pygame.display.update()
             self.clock.tick(60)
-            pygame.display.set_caption("Main Menu")
+            pygame.display.set_caption("Voice Selection")
 
 
 # Every node is an object. It has information about its parent, cargo (the number it contains), the node to the left
@@ -751,19 +733,6 @@ def build(control=None):
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
     screen.blit(pic_select, [0, 0])
-
-    # These images came from this URL: https://scribblenauts.fandom.com/wiki/Miner
-    # We do not take credit for the male and female miner .png's used in this game
-    # We are not profiting off of this and can change the pictures if need be
-    if m.voice:
-        miner_select = pygame.image.load(r'resources/Miner2.png')
-        miner_select = pygame.transform.scale(miner_select, (74, 130))
-    elif not m.voice:
-        miner_select = pygame.image.load(r'resources/Miner_Female2.png')
-        miner_select = pygame.transform.scale(miner_select, (74, 130))
-    # The numbers change the space between this character and the edge of the window
-    screen.blit(miner_select, [10, 10])
-
     draw(control)
     pygame.display.flip()
 
@@ -773,19 +742,6 @@ def pauseBuild():
     pic_select = pygame.image.load(r'resources/background.jpg')
     pic_select = pygame.transform.scale(pic_select, (WIDTH, HEIGHT))
     screen.blit(pic_select, [0, 0])
-
-    # These images came from this URL: https://scribblenauts.fandom.com/wiki/Miner
-    # We do not take credit for the male and female miner .png's used in this game
-    # We are not profiting off of this and can change the pictures if need be
-    if m.voice:
-        miner_select = pygame.image.load(r'resources/Miner2.png')
-        miner_select = pygame.transform.scale(miner_select, (74, 130))
-    elif not m.voice:
-        miner_select = pygame.image.load(r'resources/Miner_Female2.png')
-        miner_select = pygame.transform.scale(miner_select, (74, 130))
-    # The numbers change the space between this character and the edge of the window
-    screen.blit(miner_select, [10, 10])
-
     pauseHelp()
     pygame.display.flip()
 

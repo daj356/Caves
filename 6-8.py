@@ -707,7 +707,13 @@ def depth_first_search(root, tar, step=0, stepCount=0):
             stepCount = depth_first_search(root.left, tar, step, stepCount)
         m.selection = root
         build()
-        pygame.time.wait(2000)
+        now = pygame.time.get_ticks()
+        now2 = pygame.time.get_ticks()
+        while now2 - now < 2000:
+            for event in pygame.event.get():
+                if event.type:
+                    build()
+            now2 = pygame.time.get_ticks()
         if root.right:
             step = step + 1
             stepCount = depth_first_search(root.right, tar, step, stepCount)
@@ -718,17 +724,29 @@ def depth_first_search(root, tar, step=0, stepCount=0):
 
 # Block of code that will be used to breadth first search for the cave will a value of "tar"
 def breadth_first_search(tar):
+    steps = 0
     stepCount = 0
     tempArray = [m.selection]
     while len(tempArray) > 0:
         curNode = tempArray.pop(0)
-        if curNode.value == tar:
-            return stepCount
+        m.selection = curNode
+        build()
+        now = pygame.time.get_ticks()
+        now2 = pygame.time.get_ticks()
+        while now2 - now < 2000:
+            for event in pygame.event.get():
+                if event.type:
+                    build()
+            now2 = pygame.time.get_ticks()
         stepCount = stepCount + 1
+        if curNode.value == tar:
+            steps = stepCount
         if curNode.left:
             tempArray.append(curNode.left)
         if curNode.right:
             tempArray.append(curNode.right)
+    return steps
+
 
 
 # Builds the current version of the tree we are wanting. The parameter control will determine whether or not to write

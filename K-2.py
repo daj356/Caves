@@ -608,7 +608,13 @@ def random_search(tar):
     stepCount = 0
     while True:
         build()
-        pygame.time.wait(500)
+        now = pygame.time.get_ticks()
+        now2 = pygame.time.get_ticks()
+        while now2 - now < 500:
+            for event in pygame.event.get():
+                if event.type:
+                    build()
+            now2 = pygame.time.get_ticks()
         if m.selection.value == tar:
             while m.selection.parent:
                 m.selection = m.selection.parent
@@ -638,7 +644,13 @@ def depth_first_search(root, tar, step=0, stepCount=0):
             stepCount = depth_first_search(root.left, tar, step, stepCount)
         m.selection = root
         build()
-        pygame.time.wait(2000)
+        now = pygame.time.get_ticks()
+        now2 = pygame.time.get_ticks()
+        while now2 - now < 2000:
+            for event in pygame.event.get():
+                if event.type:
+                    build()
+            now2 = pygame.time.get_ticks()
         if root.right:
             step = step + 1
             stepCount = depth_first_search(root.right, tar, step, stepCount)
@@ -656,7 +668,13 @@ def breadth_first_search(tar):
         curNode = tempArray.pop(0)
         m.selection = curNode
         build()
-        pygame.time.wait(2000)
+        now = pygame.time.get_ticks()
+        now2 = pygame.time.get_ticks()
+        while now2 - now < 2000:
+            for event in pygame.event.get():
+                if event.type:
+                    build()
+            now2 = pygame.time.get_ticks()
         stepCount = stepCount + 1
         if curNode.value == tar:
             steps = stepCount

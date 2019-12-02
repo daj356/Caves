@@ -1,3 +1,5 @@
+import time
+
 import pygame
 import sys
 import os
@@ -87,6 +89,7 @@ class Master(object):
         self.x_shift = 0
         self.y_shift = 0
         self.clock = pygame.time.Clock()
+        self.start = pygame.time.get_ticks()
         self.selection = None
         self.sound = 0
 
@@ -636,21 +639,30 @@ def random_search(tar):
 
 # Block of code used to run a breadth first search for cave with the value of "tar"
 def breadth_first_search(tar):
+    while m.selection.parent:
+        m.selection = m.selection.parent
+    steps = 0
     stepCount = 0
     tempArray = [m.selection]
     while len(tempArray) > 0:
-        curNode = tempArray[0]
+        curNode = tempArray.pop(0)
+        m.selection = curNode
+        build()
+        now = pygame.time.get_ticks()
+        now2 = pygame.time.get_ticks()
+        while now2 - now < 2000:
+            for event in pygame.event.get():
+                if event.type:
+                    build()
+            now2 = pygame.time.get_ticks()
+        stepCount = stepCount + 1
         if curNode.value == tar:
-            while m.selection.parent:
-                m.selection = m.selection.parent
-            return stepCount
+            steps = stepCount
         if curNode.left:
             tempArray.append(curNode.left)
         if curNode.right:
             tempArray.append(curNode.right)
-        tempArray.pop(0)
-        stepCount = stepCount + 1
-
+    return steps
 
 # Block of code that will be used to depth first search for the cave will a value of "tar"
 def depth_first_search(tar):
@@ -724,8 +736,12 @@ def endInstruct():
 
 m = Master()
 m.intro_screen()
-talk('Hello and welcome to a brief demo of our project. Watch as we construct nodes and add them to a tree.')
-root = build_single_root()
-build(True)
-interface()
-quit()
+done = False
+while not done:
+    m.clock.tick(60)
+    talk('Hello and welcome to a brief demo of our project. Watch as we construct nodes and add them to a tree.')
+    root = build_single_root()
+    build(True)
+    interface()
+    breadth_first_search(9)
+    quit()

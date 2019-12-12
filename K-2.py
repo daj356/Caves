@@ -1,3 +1,14 @@
+# Authors: Matthew Backes, Daniel Janis, Keenan Andrea, Mohamad Sumren
+
+# This program utilizes Pygame to display information about binary trees. For all versions of this program,
+# we use two objects, Master and Node, to either create a binary tree or allow the user to create their own binary
+# tree, and then use search functions like breadth first and depth first search to teach users about these methods.
+# We use the library pyttsx3 to implement text to speech, which will allows us to communicate information to users
+# without forcing them to read dialogue on their own, which should make it more fun and engaging.
+
+# For this version (K-2) there is no random tree creation, nor can the user create their own tree. This was done to
+# prevent the program from being overly complicated for a much younger audience.
+
 import pygame
 import sys
 import os
@@ -65,8 +76,9 @@ Y_START = 200
 # Y_STEP's multiplier determines how deep the line from node to node is
 Y_STEP = BOX_SIZE[1] * 2
 
-# The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
+# The number of nodes in the tree
 NUM_OF_NODES = 10
+
 KEYBOARD_PAN_STEP = 50
 
 
@@ -108,7 +120,8 @@ class Master(object):
         self.clock = pygame.time.Clock()
         self.selection = None
 
-    # Main Menu
+    # Main Menu. Arrow keys will take you up and down the selection menu, either allowing you to start the program or
+    # quit out of it.
     def intro_screen(self):
         index = 0
         # add "info" back to the list below
@@ -159,7 +172,7 @@ class Master(object):
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
 
-    # Select Voice
+    # Select Voice. This function works very similarly to the intro screen right about it.
     def voice_selection(self):
         index = 0
         # add "info" back to the list below
@@ -515,6 +528,7 @@ def build_rand_tree():
             m.selection = m.selection.parent
     return root
 
+
 # tree1() and tree2() build hard coded trees that will be used to explain searches. We wanted to avoided having
 # degenerate trees pop up which could happen with the low node count, so we opted to hard code the trees K-2 will
 # look at which avoids this issue.
@@ -532,6 +546,7 @@ def tree1():
     set_all_rects()
     return root
 
+
 def tree2():
     root = create_root_node()
     m.selection = root
@@ -545,6 +560,7 @@ def tree2():
     m.selection = m.selection.parent
     set_all_rects()
     return root
+
 
 # Builds a single parent node as a tree, for displaying an example of a parent node
 def build_single_root():
@@ -730,6 +746,7 @@ def pauseBuild():
     pygame.display.flip()
 
 
+target = 4
 # initialization
 m = Master()
 m.intro_screen()
@@ -737,48 +754,52 @@ m.voice_selection()
 talk("Hello and welcome to Spelunkster 3000.")
 root = build_single_root()
 build()
-talk('Describe purpose of program. Single root is shown. Narrator voice.')
+talk("Today we're going to talk about caves and how we can search them. Take a look at the cave you see right now.")
 m.reset()
 root = parent_with_two_children()
-talk('Describe how caves are added to root node. Parent with two children shown. Narrator voice.')
+talk("We've gone ahead and added two additional caves onto the one we already have. You can see how to move from one "
+     "cave to another by the lines.")
 m.reset()
 root = tree1()
 build()
-talk('This is the cave they will look at the most. Currently random, will include standard cave later. Begin to '
-     'explain searches in terms of characters moving through caves. Depth-first is Left-Root-Right and Breadth first '
-     'is level by level. We have been getting them mixed up this whole time. I fixed the old code to reflect this. '
-     'Narrator voice.')
-talk('Have each character introduce themselves probably. Try and explain why they do what they do. Use appropriate '
-     'voice.')
-target = 4
-talk("First, lets see how -name- digs a cave. This can either be really quick or really slow.")
+talk("Here is a much bigger cave. We're going to see how different ways of searching this cave will produce different "
+     "results.")
+talk("Let's look for cave number " + str(target))
+talk('We have a couple of explorers with different ways of searching caves. Their names are John, Alice and Katherine.')
+talk("First, lets see how John digs a cave. John has no map to navigate the cave, and will move about randomly")
 randCount = random_search(target)
-talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
-talk("Now we will see how -name- searches a cave system.")
+talk("John took " + str(randCount) + "searches to find the target.")
+talk("Now we will see how Alice searches a cave system. Alice likes to search top to bottom, and will avoid the "
+     "deepest parts until the end.")
 breadthCount = breadth_first_search(target)
 build()
-talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
-talk("Finally, lets see how -name- searches a cave system.")
+talk("Alice took " + str(breadthCount) + "searches to find the target.")
+talk("Finally, lets see how Katherine searches a cave system. Katherine will attempt to search the cave to the left "
+     "first, only moving right when possible.")
 depthCount = depth_first_search(root, target)
 build()
-talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
+talk("Katherine took " + str(depthCount) + "searches to find the target.")
 
-talk('After this maybe run the searches again on a different tree, prompting them to guess which one is faster. Tell '
-     'them how the pause menu works (WASD moves screen, enter to continue).')
+talk("Next, we'll be looking at a different cave. Try and guess who will find cave number " + str(target) + " first.")
 m.reset()
 root = tree2()
 build()
 pause()
-talk("First, lets see how -name- digs a cave. This can either be really quick or really slow.")
+talk("First, lets see how John digs a cave. Remember, John has no map to navigate the cave, and will move about "
+     "randomly")
 randCount = random_search(target)
-talk("A random search of the tree took " + str(randCount) + "searches to find the target.")
-talk("Now we will see how -name- searches a cave system.")
+talk("John took " + str(randCount) + "searches to find the target.")
+talk("Now we will see how Alice searches a cave system. Don't forget, Alice likes to search top to bottom, "
+     "and will avoid the deepest parts until the end.")
 breadthCount = breadth_first_search(target)
 build()
-talk("A breadth first search of the tree took " + str(breadthCount) + "searches to find the target.")
-talk("Finally, lets see how -name- searches a cave system.")
+talk("Alice took " + str(breadthCount) + "searches to find the target.")
+talk("Finally, lets see how Katherine searches a cave system. As a reminder, Katherine will attempt to search the "
+     "cave to the left first, only moving right when possible.")
 depthCount = depth_first_search(root, target)
 build()
-talk("Finally, a depth first search of the tree took " + str(depthCount) + "searches to find the target.")
-talk('Outro.')
+talk("Katherine took " + str(depthCount) + "searches to find the target.")
+talk('Did you manage to guess correctly? If not, try to guess why. John moves randomly, so it is possible that he '
+     'moves right to the target cave and instantly finds it, but that is rare. Try running the program again if you '
+     'would like to try again.')
 quit()

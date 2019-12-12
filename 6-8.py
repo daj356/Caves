@@ -1,3 +1,14 @@
+# Authors: Matthew Backes, Daniel Janis, Keenan Andrea, Mohamad Sumren
+
+# This program utilizes Pygame to display information about binary trees. For all versions of this program,
+# we use two objects, Master and Node, to either create a binary tree or allow the user to create their own binary
+# tree, and then use search functions like breadth first and depth first search to teach users about these methods.
+# We use the library pyttsx3 to implement text to speech, which will allows us to communicate information to users
+# without forcing them to read dialogue on their own, which should make it more fun and engaging.
+
+# This version of the project (6-8) is the most complex, includes as much information about tree types and search
+# methods as we thought needed, as has the greatest number of maximum nodes for custom trees.
+
 import pygame
 import sys
 import os
@@ -65,9 +76,9 @@ Y_START = 200
 # Y_STEP's multiplier determines how deep the line from node to node is
 Y_STEP = BOX_SIZE[1] * 2
 
-# The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
+# The number of nodes in the tree
 NUM_OF_NODES = 30
-MAX_NUM = 100
+
 KEYBOARD_PAN_STEP = 50
 
 
@@ -103,7 +114,8 @@ class Master(object):
         self.clock = pygame.time.Clock()
         self.selection = None
 
-    # Main Menu
+    # Main Menu. Arrow keys will take you up and down the selection menu, either allowing you to start the program or
+    # quit out of it.
     def intro_screen(self):
         index = 0
         menu_selection_list = ["start", "quit"]
@@ -153,7 +165,7 @@ class Master(object):
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
 
-    # Select Voice
+    # Select Voice. This function works very similarly to the intro screen right about it.
     def voice_selection(self):
         index = 0
         # add "info" back to the list below
@@ -263,6 +275,8 @@ class Node(object):
         y = Y_START + Y_STEP * self.depth
         tempArray.append(x + mod)
         tempArray.append(y)
+        # This if statement checks if two caves will have the same coordinates, and will shift the currently selected
+        # one to the left or right if needed.
         if tempArray in arrayOfCoords:
             if self.type == "right":
                 tempArray[0] = tempArray[0] - BOX_SIZE[0]
@@ -748,7 +762,6 @@ def breadth_first_search(tar):
     return steps
 
 
-
 # Builds the current version of the tree we are wanting. The parameter control will determine whether or not to write
 # instructions at the bottom of the screen. It will be true whenever the user has the ability to build their own tree
 def build(control=None):
@@ -885,7 +898,7 @@ root = build_rand_tree()
 build()
 talk("Remember when we talked about 'searching' a binary tree, just a few moments ago? Well, now we're going to "
      "learn what searching a binary tree means. Let's go!")
-talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
+talk("A binary tree is searched with a function. You can think of a function as something that takes in one thing, "
      "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
      "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
 talk("Let's talk about the depth first search function first. This function will take in a tree, then search each "
@@ -929,8 +942,8 @@ while loop is True:
     target = random.randint(temp2, temp)
     talk("Now, with your binary tree cave system built, try and apply what you know about breadth first search "
          "and depth first search functions to guess which search will find cave number " + str(target) + " the "
-                                                                                                         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
-                                                                                                         " then right, while a depth first search function likes to move left to right, from one level to the "
+         "fastest. But, before you do, keep in mind that a breadth first search function likes to move left, "
+         "then right, while a depth first search function likes to move left to right, from one level to the "
                                                                                                          "next level.")
     talk("Look around the tree and write down an answer. Press ENTER when you are ready to check your answer.")
     randCount = random_search(target)

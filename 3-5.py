@@ -1,3 +1,15 @@
+# Authors: Matthew Backes, Daniel Janis, Keenan Andrea, Mohamad Sumren
+
+# This program utilizes Pygame to display information about binary trees. For all versions of this program,
+# we use two objects, Master and Node, to either create a binary tree or allow the user to create their own binary
+# tree, and then use search functions like breadth first and depth first search to teach users about these methods.
+# We use the library pyttsx3 to implement text to speech, which will allows us to communicate information to users
+# without forcing them to read dialogue on their own, which should make it more fun and engaging.
+
+# This version of the project (3-5) is similar to the 6-8, but the node count for custom tress is lower and we
+# simplified the language somewhat and skipped some of the explanations of set binary trees to focus on the important
+# parts.
+
 import pygame
 import sys
 import os
@@ -68,8 +80,9 @@ Y_START = 200
 # Y_STEP's multiplier determines how deep the line from node to node is
 Y_STEP = BOX_SIZE[1] * 2
 
-# The number of nodes in the tree, and the maximum value for the random number that generates the node cargo value
+# The number of nodes in the tree
 NUM_OF_NODES = 20
+
 KEYBOARD_PAN_STEP = 50
 
 
@@ -110,7 +123,8 @@ class Master(object):
         self.clock = pygame.time.Clock()
         self.selection = None
 
-    # Main Menu
+    # Main Menu. Arrow keys will take you up and down the selection menu, either allowing you to start the program or
+    # quit out of it.
     def intro_screen(self):
         index = 0
         menu_selection_list = ["start", "quit"]
@@ -160,6 +174,7 @@ class Master(object):
             self.clock.tick(60)
             pygame.display.set_caption("Main Menu")
 
+    # Select Voice. This function works very similarly to the intro screen right about it.
     def voice_selection(self):
         index = 0
         # add "info" back to the list below
@@ -832,64 +847,13 @@ root = parent_with_two_children()
 build()
 talk("This cave, at the top, is called a parent node, and like a lot of parents, it can have children. "
      "Every parent node in a binary tree can have either one, two, or no children at all. Here's what a parent "
-     "node with two children looks like ")
-
-m.reset()
-root = build_comp_tree()
-build()
-talk("Ok, now that we know what a binary tree is, we can take a look at all the different types of binary trees "
-     "there are. What you see now is one example. This binary tree is called a complete binary tree. What makes "
-     "a binary tree complete? Well, a binary tree is complete if you can look at it top to bottom, and left to "
-     "right, and find no empty spaces between all the way through. See if you can tell whether this binary tree is "
-     "complete or not.")
-talk("Since all of the circles, or nodes are filled between the first cave and the last cave, this tree can be "
-     "rightly called 'complete'.")
-
-m.reset()
-root = build_full_tree()
-build()
-talk("Moving along to our next example. What you see now is a type of a binary tree called a full binary tree. "
-     "A full binary tree is a tree where every parent node has either two children, or no children at all. "
-     "The parent nodes that don't have any children, those nodes are called 'leaves', and, just like real tree "
-     "leaves don't have branches growing out of them, binary leaf nodes have no links, or tunnels.")
-
+     "node with two children looks like. In a moment, we're going to search through a cave with a lot more nodes "
+     "added onto it. ")
 m.reset()
 root = build_rand_tree()
 build()
-talk("Let's see what we've learned. Look at the binary tree here, represented as a system of caves, with tunnels "
-     "dug from one cave to another. Does the system of caves shown here represent a full binary tree? If you'd like "
-     "to move the screen, to get a better look, press W to go up, S to move down, A to move left and D to move right. "
-     "If you think you know the tree is or is not a full binary tree hit enter to continue. Remember, a full binary "
-     "tree is a binary tree where every parent node has either two children, or no children at all ")
-pause()
-answer = checkFull()
-if not answer:
-    talk("Drum roll please, bahdahbahdahbahdah clash. The answer is. no. This tree is not a full binary tree. It isn't "
-         "a full binary tree because not all of the parent nodes have two child nodes.")
-else:
-    talk("Drum roll please, bahdahbahdahbahdah clash. The answer is yes, because all nodes have 2 or zero children.")
-
-m.reset()
-root = build_degen_tree()
-build()
-talk("Here we have what you call a degenerate tree. A binary tree is called degenerate when each parent node has "
-     "only one child. When you try and search a tree, which is something we'll get into soon, this tree, the "
-     "degenerate tree, is the worst to sort. Can you think of any reasons why it's so tough to sort this tree?")
-
-m.reset()
-root = build_perfect_tree()
-build()
-talk("Our next tree is known as a perfect binary tree. Why is it perfect? Well, as you can see, all the parent nodes "
-     "have two children, except the ones at the very bottom. Remember what these nodes at the bottom are called? The "
-     "nodes that don't have any branches, or caves that don't have any tunnels, coming out of them?")
-talk("If you said 'leaves', you're right! And if you didn't, now you know. ")
-
-m.reset()
-root = build_rand_tree()
-build()
-talk("Remember when we talked about 'searching' a binary tree, just a few moments ago? Well, now we're going to "
-     "learn what searching a binary tree means. Let's go!")
-talk("A binary tree is searching with a function. You can think of a function as something that takes in one thing, "
+talk("Now we're going to learn what searching a binary tree means. Let's go!")
+talk("A binary tree is searched with a function. You can think of a function as something that takes in one thing, "
      "and puts out another. A lot of functions are used to search a binary tree. We'll look at two functions. One "
      "of these is called a depth-first-search. The other is known as a breadth-first-search. ")
 talk("Let's talk about the depth first search function first. This function will take in a tree, then search each "
